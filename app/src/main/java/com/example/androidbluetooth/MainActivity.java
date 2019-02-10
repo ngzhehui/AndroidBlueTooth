@@ -54,6 +54,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        Button GoToGridViewBtn = findViewById(R.id.goGridPage);
+
+        GoToGridViewBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent startIntent = new Intent(getApplicationContext(), mdpgrid.class);
+                startActivity(startIntent);
+            }
+        });
+
+
+
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         findViewByIdes();
 
