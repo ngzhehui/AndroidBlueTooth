@@ -12,6 +12,7 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -51,6 +52,7 @@ public class BluetoothConnectionService {
     ProgressDialog mProgressDialog;
     //create connectedthread object
     private ConnectedThread mConnectedThread;
+    private Intent connectionStatus;
 
     //default constructor
     public BluetoothConnectionService(Context context) {
@@ -262,17 +264,25 @@ public class BluetoothConnectionService {
      **/
     private class ConnectedThread extends Thread {
         //variables
+
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
 
         //default constructor
         public ConnectedThread(BluetoothSocket socket) {
+
+
             Log.d(TAG, "ConnectedThread: Starting.");
             //declare variables
             mmSocket = socket;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
+
+            Log.d(TAG, "ConnectionBCS: Connected");
+            connectionStatus = new Intent("connectionStatus");
+            connectionStatus.putExtra("connectionStatus","Connected"); //key and device
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(connectionStatus);
 
             //dismiss the progressdialogbox when connection is established
             //the connection with that device did not take place
@@ -288,6 +298,7 @@ public class BluetoothConnectionService {
                 tmpIn = mmSocket.getInputStream();
                 tmpOut = mmSocket.getOutputStream();
             } catch (IOException e) {
+
                 e.printStackTrace();
             }
             //need to declare our input and output stream
@@ -325,6 +336,10 @@ public class BluetoothConnectionService {
                 } catch (IOException e) {
                     //if there is a problem with the input stream we want to end the connection and break the loop
                     Log.e(TAG, "write: Error reading Input Stream. " + e.getMessage() );
+                    Log.d(TAG, "ConnectionBCS: Disconnected");
+                    connectionStatus = new Intent("connectionStatus");
+                    connectionStatus.putExtra("connectionStatus","Disconnected"); //key and device
+                    LocalBroadcastManager.getInstance(mContext).sendBroadcast(connectionStatus);
                     //there is a problem with the input stream we would want to break the loop to end the connection
                     break;
                 }

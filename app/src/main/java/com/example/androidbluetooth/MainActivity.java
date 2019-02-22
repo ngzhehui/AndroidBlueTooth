@@ -1,14 +1,18 @@
+
 //1 button
 //https://www.youtube.com/watch?v=QVD_8PrvG4Q&list=PLgCYzUzKIBE8KHMzpp6JITZ2JxTgWqDH2&index=2
 //https://github.com/mitchtabian/EnableBluetooth/blob/master/BluetoothTutorial/app/src/main/java/com/example/user/bluetoothtutorial/MainActivity.java
 //https://developer.android.com/guide/topics/connectivity/bluetooth
+// https://stackoverflow.com/questions/5161951/android-only-the-original-thread-that-created-a-view-hierarchy-can-touch-its-vi
 
 package com.example.androidbluetooth;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothHeadset;
+import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -28,10 +32,13 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.androidbluetooth.BluetoothConnectionService;
+import com.example.androidbluetooth.DeviceListAdapter;
 import com.example.androidbluetooth.R;
 
 import org.w3c.dom.Text;
 
+import java.net.ServerSocket;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Timer;
@@ -67,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     BluetoothDevice mBTDevice;
     Boolean connectivity = false;
     Boolean ConnectIcon = false;
+    Boolean check = false;
+    int mytime = 0;
 
     /**
      * Create a BroadcastReceiver for ACTION_FOUND
@@ -245,6 +254,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //Use the local broadcast manager again to register the broadcast receiver that we are going to use
         LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("incomingMessage"));
 
+        //Use the local broadcast manager again to register the broadcast receiver that we are going to use
+        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver1, new IntentFilter("connectionStatus"));
+
         //Array for the scanlistview
         mBTDevices = new ArrayList<>();
         scanListView = (ListView) findViewById(R.id.scanListView);
@@ -276,7 +288,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Log.d(TAG, "onClick: Looking for unpaired devices.");
                 startConnection();
                 statusTextView.setText("Connected");
-
             }
         });
 
@@ -297,6 +308,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
+
+
     BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -308,18 +321,40 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     };
 
+    BroadcastReceiver mReceiver1 = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //set the string builder to the textview
+            String text = intent.getStringExtra("connectionStatus");
+
+            Log.d(TAG, "Not working"+ text);
+            if(text.equals("Connected"))
+            {connectivityTextView.setText("Connected");
+                Log.d(TAG, "Connection: Connected");}
+
+            if(text.equals("Disconnected"))
+            {connectivityTextView.setText("Disconnected");
+                Log.d(TAG, "Connection: Disconnected.");}
+
+        }
+    };
+
     //create method for startingconnectButton
     //***remember the connection will fail and app will crash if you haven't paired first
     public void startConnection() {
         // Our app is already connected
         // Acceptthread is started, start a connection and initiate the connectedthread
         startBTConnection(mBTDevice, MY_UUID_INSECURE);
-        connectivity = true;
-        connectivityTextView.setText("Connected");
-        TimerExample tel = new TimerExample("task1");
 
-        Timer t = new Timer();
-        t.scheduleAtFixedRate(tel, 0, 5 * 1000);
+        /**
+
+         connectivityTextView.setText("Connected");
+         TimerExample tel = new TimerExample("task1");
+
+         Timer t = new Timer();
+         t.scheduleAtFixedRate(tel, 0, 5 * 1000);
+         *
+         */
     }
 
     /**
@@ -466,53 +501,64 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             mBTDevice = mBTDevices.get(position);
             //start a connection service
             mBluetoothConnection = new BluetoothConnectionService(MainActivity.this);
-
         }
     }
 
-    public class TimerExample extends TimerTask {
-        private String name;
+    /**
 
-        public TimerExample(String n) {
-            this.name = n;
-        }
+     public class TimerExample extends TimerTask {
+     private String name;
+     public TimerExample(String n)
+     {
+     this.name = n;
+     }
+     @Override
+     public void run() {
+     mBluetoothAdapter.isDiscovering();//start search
+     //array length - mBTDevices array length
+     Log.d(TAG, "onItemClick: HELP!! status" + mBTDevices.size() + mBTDevice.getName() + mBTDevices.get(0).getName());
+     int a = mBTDevices.size();
+     for (int j=0;j<(a-1);j++) {
+     if (mBTDevices.get(j).getName() == mBTDevice.getName()) {
+     check = true;
+     }
+     }
+     if(check == false)
+     {
+     connectivity = false;
+     }
+     if(connectivity == false && check == true) {
+     startBTConnection(mBTDevice, MY_UUID_INSECURE);
+     connectivity = true;
+     }
+     runOnUiThread(new Runnable() {
+     @Override
+     public void run() {
+     //connectivityTextView.setText("Testing");
+     if(connectivity)
+     {
+     connectivityTextView.setText("Why");
+     Log.d(TAG, "onItemClick: connectivity status" + connectivity + check + mBTDevice.getName() + mBTDevices.get(0).getName() + mBTDevices.get(1).getName());
+     }
+     else {
+     connectivityTextView.setText(" " + connectivity);
+     Log.d(TAG, "onItemClick: connectivity status" + connectivity + check + mBTDevice.getName() + mBTDevices.get(0).getName()+ mBTDevices.get(1).getName());
+     }
+     }
+     });
+     mBluetoothAdapter.cancelDiscovery();
 
-        @Override
-        public void run() {
-
-            Boolean check = false;
-            mBluetoothAdapter.isDiscovering();//start search
-            //array length - mBTDevices array length
-            for (int j=0;j<mBTDevices.size();j++) {
-                if (mBTDevices.get(j).getName() == mBTDevice.getName()) {
-                    check = true;
-                }
-            }
-
-            if(check == false)
-            {
-                connectivity = false;
-            }
-
-            if(connectivity == false && check == true)
-            {
-                startBTConnection(mBTDevice,MY_UUID_INSECURE);
-                connectivity=true;
-
-            }
-
-
-            if ("Task1".equalsIgnoreCase(name)) {
-                try {
-                    Thread.sleep(10000);
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-
-        }
-
-
-    }
+     if ("Task1".equalsIgnoreCase(name)) {
+     try {
+     Thread.sleep(10000);
+     } catch (InterruptedException e) {
+     // TODO Auto-generated catch block
+     e.printStackTrace();
+     }
+     }
+     }
+     }
+     *
+     */
 }
+
