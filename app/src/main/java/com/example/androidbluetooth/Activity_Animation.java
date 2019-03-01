@@ -16,7 +16,7 @@ public class Activity_Animation extends SurfaceView implements Runnable {
 
     Thread thread = null;
     boolean CanDraw = false;
-    boolean side = false;
+    boolean createRobot = false;
     boolean test = false;
     Bitmap background;
 
@@ -158,13 +158,14 @@ public class Activity_Animation extends SurfaceView implements Runnable {
 
     public void drawRobot()
     {
-        for(int i = 0; i<3;i++)
-            for(int j=0;j<3;j++)
-                canvas.drawRect((myRobot.x+i)+(gridSize*(myRobot.x+i-1)),(myRobot.y+j)+(gridSize*(myRobot.y+j-1)),(myRobot.x+i)+(gridSize*(myRobot.x+i)),(myRobot.y+j)+(gridSize*(myRobot.y+j)),blue); //
+        if(createRobot) {
+            for (int i = 0; i < 3; i++)
+                for (int j = 0; j < 3; j++)
+                    canvas.drawRect((myRobot.x + i) + (gridSize * (myRobot.x + i - 1)), (myRobot.y + j) + (gridSize * (myRobot.y + j - 1)), (myRobot.x + i) + (gridSize * (myRobot.x + i)), (myRobot.y + j) + (gridSize * (myRobot.y + j)), blue); //
 
-        canvas.drawRect((myRobot.x+myRobot.dirx)+(gridSize*(myRobot.x+myRobot.dirx)),(myRobot.y+myRobot.diry)+(gridSize*(myRobot.y+myRobot.diry)),(myRobot.x+myRobot.dirx+1)+(gridSize*(myRobot.x+myRobot.dirx+1)),(myRobot.y+myRobot.diry+1)+(gridSize*(myRobot.y+myRobot.diry+1)),green);
+            canvas.drawRect((myRobot.x + myRobot.dirx) + (gridSize * (myRobot.x + myRobot.dirx)), (myRobot.y + myRobot.diry) + (gridSize * (myRobot.y + myRobot.diry)), (myRobot.x + myRobot.dirx + 1) + (gridSize * (myRobot.x + myRobot.dirx + 1)), (myRobot.y + myRobot.diry + 1) + (gridSize * (myRobot.y + myRobot.diry + 1)), green);
 
-        //canvas.drawRect((p.x+1)+(46*p.x),(p.y+1)+(46*p.y),(p.x+1)+(46*(p.x+1)),(p.y+1)+(46*(p.y+1)),red); //
+        }
 
     }
 
@@ -194,6 +195,13 @@ public class Activity_Animation extends SurfaceView implements Runnable {
     public  void RemoveBlock(int x, int y)
     {
         blocklist.remove(""+x+y);
+    }
+
+    public  void SelectRobot(int x, int y)
+    {
+        createRobot = true;
+        myRobot.x = x;
+        myRobot.y = y;
     }
 
     public void startrobot()

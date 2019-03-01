@@ -14,7 +14,9 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
     float x,y;
     TextView tv;
     boolean block = false;
-    Button BlockBtn;
+    boolean robotset = false;
+    int action = 0; // action 0, 1 brick function, action 2 robot function
+    Button BlockBtn, RobotBtn;
     Button StartBtn;
     Button RotateRightBtn,RotateLeftBtn;
 
@@ -36,6 +38,8 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
 
         BlockBtn = findViewById(R.id.Block);
 
+        RobotBtn = findViewById(R.id.robot);
+
 
         StartBtn = findViewById(R.id.Start);
 
@@ -47,6 +51,13 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
             @Override
             public void onClick(View v) {
                 ChangeBlockstatus();
+            }
+        });
+
+        RobotBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ChangeRobotstatus();
             }
         });
 
@@ -94,10 +105,26 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
         if (!block) {
             block = true;
             BlockBtn.setBackgroundResource(R.drawable.brickselected);
+            action = 1;
         }
         else {
             block = false;
             BlockBtn.setBackgroundResource(R.drawable.brick);
+            action = 0;
+        }
+    }
+
+    private void ChangeRobotstatus()
+    {
+        if (!robotset) {
+            robotset = true;
+            RobotBtn.setBackgroundResource(R.drawable.bot2);
+            action = 2;
+        }
+        else {
+            robotset = false;
+            RobotBtn.setBackgroundResource(R.drawable.bot);
+            action = 0;
         }
     }
 
@@ -107,10 +134,20 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
     @Override
     public boolean onTouch(View v, MotionEvent me) {
 
-        if (!block)
-            RemoveBlock(me.getX(),me.getY());
-        else
-            AddBlock(me.getX(),me.getY());
+        switch (action)
+        {
+            case 0:
+                RemoveBlock(me.getX(),me.getY());
+                break;
+            case 1:
+                AddBlock(me.getX(),me.getY());
+                break;
+            case 2:
+                SelectRobot(me.getX(),me.getY());
+                break;
+            default:
+                break;
+        }
 
         tv.setText("x="+me.getX()+", y:" + me.getY());
         return false;
@@ -124,6 +161,40 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
     public void RemoveBlock(float x, float y)
     {
         animation_LayoutView.RemoveBlock((int)(x/43),(int)(y/43));
+    }
+
+    public void SelectRobot(float x, float y)
+    {
+        int adjustmentX, adjustmentY;
+
+        switch((int)(x/43))
+        {
+            case 0:
+                adjustmentX = 1;
+                break;
+            case 14:
+                adjustmentX = 13;
+                break;
+            default:
+                adjustmentX = (int)(x/43);
+
+        }
+
+        switch((int)(y/43))
+        {
+            case 0:
+                adjustmentY = 1;
+                break;
+            case 19:
+                adjustmentY = 18;
+                break;
+            default:
+                adjustmentY = (int)(y/43);
+
+        }
+
+
+        animation_LayoutView.SelectRobot(adjustmentX,adjustmentY);
     }
 
 
