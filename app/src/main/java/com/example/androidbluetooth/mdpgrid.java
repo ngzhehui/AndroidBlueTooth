@@ -118,12 +118,12 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
 
     public void AddBlock(float x, float y)
     {
-        animation_LayoutView.AddBlock((int)(x/47),(int)(y/47));
+        animation_LayoutView.AddBlock((int)(x/43),(int)(y/43));
     }
 
     public void RemoveBlock(float x, float y)
     {
-        animation_LayoutView.RemoveBlock((int)(x/47),(int)(y/47));
+        animation_LayoutView.RemoveBlock((int)(x/43),(int)(y/43));
     }
 
 

@@ -22,11 +22,13 @@ public class Activity_Animation extends SurfaceView implements Runnable {
 
     HashMap<String, Cell> blocklist = new HashMap<String, Cell>();
 
+    int gridSize = 42;
+
 
     Robot myRobot = new Robot();
 
 
-    Paint red,blue;
+    Paint red,blue,green;
 
     int timing = 0;
 
@@ -47,8 +49,6 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         blue = new Paint();
         blue.setColor(Color.BLUE);
 
-
-
     }
 
     public Activity_Animation(Context context, AttributeSet attrs) {
@@ -62,9 +62,8 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         blue = new Paint();
         blue.setColor(Color.BLUE);
 
-
-
-
+        green = new Paint();
+        green.setColor(Color.GREEN);
     }
 
     public Activity_Animation(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -78,9 +77,8 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         blue = new Paint();
         blue.setColor(Color.BLUE);
 
-
-
-
+        green = new Paint();
+        green.setColor(Color.GREEN);
     }
 
 
@@ -122,7 +120,7 @@ public class Activity_Animation extends SurfaceView implements Runnable {
 
         for(Cell p : blocklist.values())
         {
-            canvas.drawRect((p.x+1)+(46*p.x),(p.y+1)+(46*p.y),(p.x+1)+(46*(p.x+1)),(p.y+1)+(46*(p.y+1)),red); //
+            canvas.drawRect((p.x+1)+(gridSize*p.x),(p.y+1)+(gridSize*p.y),(p.x+1)+(gridSize*(p.x+1)),(p.y+1)+(gridSize*(p.y+1)),red); //
         }
 
 
@@ -162,7 +160,11 @@ public class Activity_Animation extends SurfaceView implements Runnable {
     {
         for(int i = 0; i<3;i++)
             for(int j=0;j<3;j++)
-                canvas.drawRect((myRobot.x+i)+(46*(myRobot.x+i-1)),(myRobot.y+j)+(46*(myRobot.y+j-1)),(myRobot.x+i)+(46*(myRobot.x+i)),(myRobot.y+j)+(46*(myRobot.y+j)),blue); //
+                canvas.drawRect((myRobot.x+i)+(gridSize*(myRobot.x+i-1)),(myRobot.y+j)+(gridSize*(myRobot.y+j-1)),(myRobot.x+i)+(gridSize*(myRobot.x+i)),(myRobot.y+j)+(gridSize*(myRobot.y+j)),blue); //
+
+        canvas.drawRect((myRobot.x+myRobot.dirx)+(gridSize*(myRobot.x+myRobot.dirx)),(myRobot.y+myRobot.diry)+(gridSize*(myRobot.y+myRobot.diry)),(myRobot.x+myRobot.dirx+1)+(gridSize*(myRobot.x+myRobot.dirx+1)),(myRobot.y+myRobot.diry+1)+(gridSize*(myRobot.y+myRobot.diry+1)),green);
+
+        //canvas.drawRect((p.x+1)+(46*p.x),(p.y+1)+(46*p.y),(p.x+1)+(46*(p.x+1)),(p.y+1)+(46*(p.y+1)),red); //
 
     }
 

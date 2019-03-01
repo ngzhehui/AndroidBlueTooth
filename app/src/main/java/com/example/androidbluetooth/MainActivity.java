@@ -239,6 +239,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_main);
         //Initialise button
         Button bluetoothButton = (Button) findViewById(R.id.bluetoothButton);
@@ -304,6 +306,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 //set the text blank after you have sent a message
                 sendEditText.setText("");
                 statusTextView.setText("Message sent");
+            }
+        });
+
+        //this section is for function to access to next page
+        Button mapbtn = findViewById(R.id.mapbtn);
+
+        mapbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent startIntent = new Intent(getApplicationContext(), mdpgrid.class);
+                startActivity(startIntent);
             }
         });
     }

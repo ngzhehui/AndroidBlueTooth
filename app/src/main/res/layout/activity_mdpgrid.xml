@@ -8,9 +8,8 @@
 
     <com.example.androidbluetooth.Activity_Animation
         android:id="@+id/activity_Animation_View"
-        android:layout_width="706dp"
-        android:layout_height="941dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="646dp"
+        android:layout_height="861dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -19,16 +18,14 @@
         android:layout_width="123dp"
         android:layout_height="108dp"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="80dp"
         android:background="@drawable/brick"
         android:textSize="30sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.145"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.987"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rotateright" />
 
     <TextView
         android:id="@+id/StatusView"
@@ -48,53 +45,44 @@
 
     <Button
         android:id="@+id/rotateleft"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="97dp"
+        android:layout_height="97dp"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="52dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
         android:background="@drawable/leftrotate"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/straight"
-        app:layout_constraintHorizontal_bias="0.991"
-        app:layout_constraintStart_toEndOf="@+id/Block"
-        app:layout_constraintTop_toBottomOf="@+id/activity_Animation_View"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/straight" />
 
     <Button
         android:id="@+id/straight"
-        android:layout_width="42dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="52dp"
-        android:layout_marginEnd="88dp"
-        android:layout_marginRight="88dp"
-        android:layout_marginBottom="8dp"
+        android:layout_width="76dp"
+        android:layout_height="82dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="940dp"
         android:background="@drawable/straight"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activity_Animation_View"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.176" />
 
     <Button
         android:id="@+id/rotateright"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="97dp"
+        android:layout_height="97dp"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="52dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="32dp"
         android:background="@drawable/rightrotate"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/straight"
-        app:layout_constraintTop_toBottomOf="@+id/activity_Animation_View"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rotateleft" />
 
     <Button
         android:id="@+id/Start"
