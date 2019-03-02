@@ -199,9 +199,11 @@ public class Activity_Animation extends SurfaceView implements Runnable {
 
     public  void SelectRobot(int x, int y)
     {
+        test = false;
         createRobot = true;
         myRobot.x = x;
         myRobot.y = y;
+
     }
 
     public void startrobot()

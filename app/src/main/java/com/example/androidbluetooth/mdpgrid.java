@@ -1,11 +1,33 @@
 package com.example.androidbluetooth;
 
+import android.database.Cursor;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.JsonWriter;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 
 public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
 
@@ -19,6 +41,10 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
     Button BlockBtn, RobotBtn;
     Button StartBtn;
     Button RotateRightBtn,RotateLeftBtn;
+
+    String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/MDP";
+
+    DatabaseHelper myDb;
 
 
     @Override
@@ -83,8 +109,27 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
         });
 
 
+        myDb = new DatabaseHelper(this);
 
 
+        //this part is to insert data
+        //tv.setText((myDb.insertData("testing123"))+"");
+
+
+
+        //This part is to get data from table
+        Cursor res = myDb.getAllData();
+        if(res.getCount() == 0)
+        {
+            //no data exist
+            return;
+        }
+        StringBuffer buffer = new StringBuffer();
+        while(res.moveToNext())
+        {
+            buffer.append(res.getString(1));
+        }
+        tv.setText(buffer);
 
     }
 
@@ -196,6 +241,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
 
         animation_LayoutView.SelectRobot(adjustmentX,adjustmentY);
     }
+
 
 
 }
