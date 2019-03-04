@@ -51,7 +51,7 @@ public class BluetoothConnectionService {
     //progress dialog
     ProgressDialog mProgressDialog;
     //create connectedthread object
-    private ConnectedThread mConnectedThread;
+    public static ConnectedThread mConnectedThread;
     private Intent connectionStatus;
 
     //default constructor
@@ -385,7 +385,7 @@ public class BluetoothConnectionService {
      * have to write a write method that can access the connection service which
      * can then access the connected thread
      */
-    public void write(byte[] out) {
+    public static void write(byte[] out) {
         // Create temporary object
         ConnectedThread r;
 

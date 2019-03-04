@@ -316,10 +316,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onClick(View v) {
                 Intent startIntent = new Intent(getApplicationContext(), mdpgrid.class);
-                Bundle extras = new Bundle();
-                extras.putString("dname",mBTDevice.getName());
-                extras.putString("macaddress",mBTDevice.getAddress());
-                startIntent.putExtras(extras);
                 startActivity(startIntent);
             }
         });

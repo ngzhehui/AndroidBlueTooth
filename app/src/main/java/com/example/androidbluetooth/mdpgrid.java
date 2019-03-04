@@ -1,7 +1,12 @@
 package com.example.androidbluetooth;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Environment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.JsonWriter;
@@ -43,20 +48,19 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
     Button StartBtn;
     Button RotateRightBtn,RotateLeftBtn;
 
-    String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/MDP";
 
     DatabaseHelper myDb;
 
-    public BluetoothConnectionService mBluetoothConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
 
-        mBluetoothConnection = getIntent().getExtras().getParcelable("btConnection");
-
         setContentView(R.layout.activity_mdpgrid);
+
+        //Use the local broadcast manager again to register the broadcast receiver that we are going to use
+        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("incomingMessage"));
 
         //animation_LayoutView = new Activity_Animation(this);
         animation_LayoutView = (Activity_Animation) findViewById(R.id.activity_Animation_View);
@@ -83,7 +87,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
             public void onClick(View v) {
                 byte[] bytes = "testing123456".getBytes(Charset.defaultCharset());
                 //send those byte to the connection service using the write method in Connectedthread
-                mBluetoothConnection.write(bytes);
+                BluetoothConnectionService.write(bytes);
                 ChangeBlockstatus();
             }
         });
@@ -137,9 +141,19 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
         {
             buffer.append(res.getString(1));
         }
-        tv.setText(buffer);
+        //tv.setText(buffer);
 
     }
+
+
+    BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //set the string builder to the textview
+            String text = intent.getStringExtra("theMessage");
+            tv.setText(text);
+        }
+    };
 
     @Override
     protected void onResume() {
