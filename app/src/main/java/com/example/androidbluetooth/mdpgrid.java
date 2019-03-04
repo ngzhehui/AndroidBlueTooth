@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.JsonWriter;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -48,6 +49,9 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
     Button StartBtn;
     Button RotateRightBtn,RotateLeftBtn;
 
+    // Appends the incoming messages and then posting them to the textview
+    StringBuilder messages;
+
 
     DatabaseHelper myDb;
 
@@ -58,9 +62,17 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
 
 
         setContentView(R.layout.activity_mdpgrid);
+        messages = new StringBuilder();
+
+
+
 
         //Use the local broadcast manager again to register the broadcast receiver that we are going to use
         LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("incomingMessage"));
+
+        /////////////////////////////////////////////////////ANY CODE BELOW HERE WON"T RUN/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
         //animation_LayoutView = new Activity_Animation(this);
         animation_LayoutView = (Activity_Animation) findViewById(R.id.activity_Animation_View);
@@ -70,6 +82,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
         //setContentView(animation_LayoutView);
 
         tv = (TextView) findViewById(R.id.StatusView);
+        tv.setMovementMethod(new ScrollingMovementMethod());
 
         BlockBtn = findViewById(R.id.Block);
 
@@ -143,6 +156,8 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
         }
         //tv.setText(buffer);
 
+
+
     }
 
 
@@ -151,6 +166,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
         public void onReceive(Context context, Intent intent) {
             //set the string builder to the textview
             String text = intent.getStringExtra("theMessage");
+            messages.append("Bluetooth: " + text + "\n");
             tv.setText(text);
         }
     };
@@ -216,18 +232,29 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
                 break;
         }
 
-        tv.setText("x="+me.getX()+", y:" + me.getY());
+        //tv.setText("x="+me.getX()+", y:" + me.getY());
         return false;
     }
 
     public void AddBlock(float x, float y)
     {
-        animation_LayoutView.AddBlock((int)(x/43),(int)(y/43));
+        int x1= (int)(x/43);
+        int y1=(int)(y/43);
+        animation_LayoutView.AddBlock(x1,y1);
+        String msg = String.format("Waypont(%d,%d) selected", x1, y1);
+        messages.append("Android: " + msg + "\n");
+        tv.setText(messages);
+
     }
 
     public void RemoveBlock(float x, float y)
     {
-        animation_LayoutView.RemoveBlock((int)(x/43),(int)(y/43));
+        int x1= (int)(x/43);
+        int y1=(int)(y/43);
+        animation_LayoutView.RemoveBlock(x1,y1);
+       String msg = String.format("Waypont(%d,%d) unselected", x1, y1);
+       messages.append("Android: " + msg + "\n");
+       tv.setText(messages);
     }
 
     public void SelectRobot(float x, float y)

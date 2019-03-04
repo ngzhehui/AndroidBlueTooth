@@ -15,38 +15,35 @@
 
     <Button
         android:id="@+id/Block"
-        android:layout_width="123dp"
-        android:layout_height="108dp"
+        android:layout_width="84dp"
+        android:layout_height="75dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="196dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/brick"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.997"
+        app:layout_constraintHorizontal_bias="0.98"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rotateright" />
 
     <TextView
         android:id="@+id/StatusView"
-        android:layout_width="247dp"
-        android:layout_height="34dp"
+        android:layout_width="274dp"
+        android:layout_height="134dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="60dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="224dp"
-        android:text="Status View"
-        android:textSize="30sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:scrollbars="vertical"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/activity_Animation_View" />
 
     <Button
         android:id="@+id/rotateleft"
-        android:layout_width="97dp"
-        android:layout_height="97dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
@@ -58,8 +55,8 @@
 
     <Button
         android:id="@+id/straight"
-        android:layout_width="76dp"
-        android:layout_height="82dp"
+        android:layout_width="51dp"
+        android:layout_height="64dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="40dp"
@@ -74,8 +71,8 @@
 
     <Button
         android:id="@+id/rotateright"
-        android:layout_width="97dp"
-        android:layout_height="97dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="32dp"
         android:background="@drawable/rightrotate"
@@ -89,28 +86,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:text="Start"
-        android:textSize="30sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.688"
+        app:layout_constraintHorizontal_bias="0.987"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activity_Animation_View"
-        app:layout_constraintVertical_bias="0.137" />
+        app:layout_constraintTop_toBottomOf="@+id/robot" />
 
     <Button
         android:id="@+id/robot"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="88dp"
+        android:layout_height="88dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/bot"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.997"
+        app:layout_constraintHorizontal_bias="0.985"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Block" />
 
