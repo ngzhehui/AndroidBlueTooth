@@ -18,7 +18,7 @@ public class Activity_Animation extends SurfaceView implements Runnable {
     boolean CanDraw = false;
     boolean createRobot = false;
     boolean test = false;
-    Bitmap background;
+    Bitmap background,scaled;
 
     HashMap<String, Cell> blocklist = new HashMap<String, Cell>();
 
@@ -28,7 +28,7 @@ public class Activity_Animation extends SurfaceView implements Runnable {
     Robot myRobot = new Robot();
 
 
-    Paint red,blue,green;
+    Paint red,blue,green,white;
 
     int timing = 0;
 
@@ -43,11 +43,19 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         surfaceHolder = getHolder();
         background = BitmapFactory.decodeResource(getResources(),R.drawable.grid);
 
+        float scale = (float)background.getHeight()/861;
+        int newWidth = Math.round(background.getWidth()/scale);
+        int newHeight = Math.round(background.getHeight()/scale);
+        scaled = Bitmap.createScaledBitmap(background, newWidth, newHeight, true);
+
         red = new Paint();
         red.setColor(Color.BLACK);
 
         blue = new Paint();
         blue.setColor(Color.BLUE);
+
+        white = new Paint();
+        white.setColor(Color.WHITE);
 
     }
 
@@ -56,6 +64,11 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         surfaceHolder = getHolder();
         background = BitmapFactory.decodeResource(getResources(),R.drawable.grid);
 
+        float scale = (float)background.getHeight()/861;
+        int newWidth = Math.round(background.getWidth()/scale);
+        int newHeight = Math.round(background.getHeight()/scale);
+        scaled = Bitmap.createScaledBitmap(background, newWidth, newHeight, true);
+
         red = new Paint();
         red.setColor(Color.BLACK);
 
@@ -64,6 +77,9 @@ public class Activity_Animation extends SurfaceView implements Runnable {
 
         green = new Paint();
         green.setColor(Color.GREEN);
+
+        white = new Paint();
+        white.setColor(Color.WHITE);
     }
 
     public Activity_Animation(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -71,6 +87,11 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         surfaceHolder = getHolder();
         background = BitmapFactory.decodeResource(getResources(),R.drawable.grid);
 
+        float scale = (float)background.getHeight()/861;
+        int newWidth = Math.round(background.getWidth()/scale);
+        int newHeight = Math.round(background.getHeight()/scale);
+        scaled = Bitmap.createScaledBitmap(background, newWidth, newHeight, true);
+
         red = new Paint();
         red.setColor(Color.BLACK);
 
@@ -79,6 +100,9 @@ public class Activity_Animation extends SurfaceView implements Runnable {
 
         green = new Paint();
         green.setColor(Color.GREEN);
+
+        white = new Paint();
+        white.setColor(Color.WHITE);
     }
 
 
@@ -113,7 +137,17 @@ public class Activity_Animation extends SurfaceView implements Runnable {
     private void draw()
     {
         canvas = surfaceHolder.lockCanvas();
-        canvas.drawBitmap(background,0,0,null);
+        canvas.drawBitmap(scaled,0,0,null);
+
+        /*
+        canvas.drawPaint(white);
+
+
+        for(int j=0; j<21;j++)
+        {
+            canvas.drawLine(0, gridSize*j, 646, gridSize*j, red);
+        }
+        */
 
 
 

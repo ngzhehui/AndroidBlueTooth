@@ -27,6 +27,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
@@ -46,10 +47,14 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
 
     DatabaseHelper myDb;
 
+    public BluetoothConnectionService mBluetoothConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        mBluetoothConnection = getIntent().getExtras().getParcelable("btConnection");
 
         setContentView(R.layout.activity_mdpgrid);
 
@@ -76,6 +81,9 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
         BlockBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                byte[] bytes = "testing123456".getBytes(Charset.defaultCharset());
+                //send those byte to the connection service using the write method in Connectedthread
+                mBluetoothConnection.write(bytes);
                 ChangeBlockstatus();
             }
         });

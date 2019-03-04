@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     // Appends the incoming messages and then posting them to the textview
     StringBuilder messages;
     //Connection service object
-    BluetoothConnectionService mBluetoothConnection;
+    public BluetoothConnectionService mBluetoothConnection;
     //UUID
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -316,6 +316,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onClick(View v) {
                 Intent startIntent = new Intent(getApplicationContext(), mdpgrid.class);
+                Bundle extras = new Bundle();
+                extras.putString("dname",mBTDevice.getName());
+                extras.putString("macaddress",mBTDevice.getAddress());
+                startIntent.putExtras(extras);
                 startActivity(startIntent);
             }
         });
@@ -517,61 +521,5 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    /**
-
-     public class TimerExample extends TimerTask {
-     private String name;
-     public TimerExample(String n)
-     {
-     this.name = n;
-     }
-     @Override
-     public void run() {
-     mBluetoothAdapter.isDiscovering();//start search
-     //array length - mBTDevices array length
-     Log.d(TAG, "onItemClick: HELP!! status" + mBTDevices.size() + mBTDevice.getName() + mBTDevices.get(0).getName());
-     int a = mBTDevices.size();
-     for (int j=0;j<(a-1);j++) {
-     if (mBTDevices.get(j).getName() == mBTDevice.getName()) {
-     check = true;
-     }
-     }
-     if(check == false)
-     {
-     connectivity = false;
-     }
-     if(connectivity == false && check == true) {
-     startBTConnection(mBTDevice, MY_UUID_INSECURE);
-     connectivity = true;
-     }
-     runOnUiThread(new Runnable() {
-     @Override
-     public void run() {
-     //connectivityTextView.setText("Testing");
-     if(connectivity)
-     {
-     connectivityTextView.setText("Why");
-     Log.d(TAG, "onItemClick: connectivity status" + connectivity + check + mBTDevice.getName() + mBTDevices.get(0).getName() + mBTDevices.get(1).getName());
-     }
-     else {
-     connectivityTextView.setText(" " + connectivity);
-     Log.d(TAG, "onItemClick: connectivity status" + connectivity + check + mBTDevice.getName() + mBTDevices.get(0).getName()+ mBTDevices.get(1).getName());
-     }
-     }
-     });
-     mBluetoothAdapter.cancelDiscovery();
-
-     if ("Task1".equalsIgnoreCase(name)) {
-     try {
-     Thread.sleep(10000);
-     } catch (InterruptedException e) {
-     // TODO Auto-generated catch block
-     e.printStackTrace();
-     }
-     }
-     }
-     }
-     *
-     */
 }
 
