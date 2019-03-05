@@ -36,6 +36,9 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
 
 
@@ -47,13 +50,15 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
     int action = 0; // action 0, 1 brick function, action 2 robot function
     Button BlockBtn, RobotBtn;
     Button StartBtn;
-    Button RotateRightBtn,RotateLeftBtn;
+    Button RotateRightBtn,RotateLeftBtn, ForwardBtn;
 
     // Appends the incoming messages and then posting them to the textview
     StringBuilder messages;
 
 
     DatabaseHelper myDb;
+
+    String[] hashtable = new String[16];
 
 
     @Override
@@ -69,6 +74,32 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
 
         //Use the local broadcast manager again to register the broadcast receiver that we are going to use
         LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("incomingMessage"));
+
+
+
+        TimerExample tel = new TimerExample("task1");
+
+        Timer t = new Timer();
+        t.scheduleAtFixedRate(tel, 0, 5000);
+
+
+        //hash table
+        hashtable[0] = "0000";
+        hashtable[1] = "0001";
+        hashtable[2] = "0010";
+        hashtable[3] = "0011";
+        hashtable[4] = "0100";
+        hashtable[5] = "0101";
+        hashtable[6] = "0110";
+        hashtable[7] = "0111";
+        hashtable[8] = "1000";
+        hashtable[9] = "1001";
+        hashtable[10] = "1010";
+        hashtable[11] = "1011";
+        hashtable[12] = "1100";
+        hashtable[13] = "1101";
+        hashtable[14] = "1110";
+        hashtable[15] = "1111";
 
         /////////////////////////////////////////////////////ANY CODE BELOW HERE WON"T RUN/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -93,14 +124,12 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
 
         RotateLeftBtn = findViewById(R.id.rotateleft);
         RotateRightBtn = findViewById(R.id.rotateright);
+        ForwardBtn = findViewById(R.id.straight);
 
 
         BlockBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                byte[] bytes = "testing123456".getBytes(Charset.defaultCharset());
-                //send those byte to the connection service using the write method in Connectedthread
-                BluetoothConnectionService.write(bytes);
                 ChangeBlockstatus();
             }
         });
@@ -122,6 +151,9 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
         RotateLeftBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                byte[] bytes = "tl".getBytes(Charset.defaultCharset());
+                //send those byte to the connection service using the write method in Connectedthread
+                BluetoothConnectionService.write(bytes);
                 animation_LayoutView.rotateleft();
             }
         });
@@ -129,7 +161,20 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
         RotateRightBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                byte[] bytes = "tr".getBytes(Charset.defaultCharset());
+                //send those byte to the connection service using the write method in Connectedthread
+                BluetoothConnectionService.write(bytes);
                 animation_LayoutView.rotateright();
+            }
+        });
+
+        ForwardBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                byte[] bytes = "f".getBytes(Charset.defaultCharset());
+                //send those byte to the connection service using the write method in Connectedthread
+                BluetoothConnectionService.write(bytes);
+                //animation_LayoutView.rotateright();
             }
         });
 
@@ -160,14 +205,51 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
 
     }
 
+    ///////////////////////////////////////////BLUETOOTH RECECIVER///////////////////////////////////////////
 
     BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             //set the string builder to the textview
             String text = intent.getStringExtra("theMessage");
+
+            if(text.length()>50)
+            {
+                String[] split = text.split(",");
+
+                int index =0;
+                String BinaryHex = "";
+
+                animation_LayoutView.AddBlock(1, 0);
+
+
+                for(int k=0;k<75;k++)
+                {
+                //BinaryHex += hashtable[Integer.parseInt(split[3].substring(k),16)];
+                }
+
+
+
+                //for AMDtool
+                        //animation_LayoutView.fixRobot(Integer.parseInt(split[0]),Integer.parseInt(split[1]));
+
+                        for(int i=0;i<20;i++)//y
+                        {
+                            for(int j=0;j<15;j++) //x
+                            {
+                                if(BinaryHex.substring(index).equals("1")) {
+                                    //animation_LayoutView.AddBlock(j, i);
+                                    //animation_LayoutView.AddBlock(1, 1);
+                                }
+                                index++;
+                            }
+                        }
+
+            }
+
+
             messages.append("Bluetooth: " + text + "\n");
-            tv.setText(text);
+            //tv.setText(messages);
         }
     };
 
@@ -242,6 +324,9 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
         int y1=(int)(y/43);
         animation_LayoutView.AddBlock(x1,y1);
         String msg = String.format("Waypont(%d,%d) selected", x1, y1);
+        byte[] bytes = msg.getBytes(Charset.defaultCharset());
+        //send those byte to the connection service using the write method in Connectedthread
+        BluetoothConnectionService.write(bytes);
         messages.append("Android: " + msg + "\n");
         tv.setText(messages);
 
@@ -253,6 +338,9 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
         int y1=(int)(y/43);
         animation_LayoutView.RemoveBlock(x1,y1);
        String msg = String.format("Waypont(%d,%d) unselected", x1, y1);
+        byte[] bytes = msg.getBytes(Charset.defaultCharset());
+        //send those byte to the connection service using the write method in Connectedthread
+        BluetoothConnectionService.write(bytes);
        messages.append("Android: " + msg + "\n");
        tv.setText(messages);
     }
@@ -287,8 +375,44 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
 
         }
 
+        String msg = String.format("Robot's coordinate (%d,%d)", adjustmentX, adjustmentY);
+        messages.append("Android: " + msg + "\n");
+        byte[] bytes = msg.getBytes(Charset.defaultCharset());
+        //send those byte to the connection service using the write method in Connectedthread
+        BluetoothConnectionService.write(bytes);
+
+
 
         animation_LayoutView.SelectRobot(adjustmentX,adjustmentY);
+    }
+
+
+
+    public class TimerExample extends TimerTask {
+        private String name;
+
+        public TimerExample(String n) {
+            this.name = n;
+        }
+
+        @Override
+        public void run() {
+
+            byte[] bytes = "sendArena".getBytes(Charset.defaultCharset());
+            //send those byte to the connection service using the write method in Connectedthread
+            BluetoothConnectionService.write(bytes);
+
+
+            if ("Task1".equalsIgnoreCase(name)) {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+
+        }
     }
 
 

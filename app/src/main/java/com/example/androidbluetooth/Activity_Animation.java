@@ -220,9 +220,16 @@ public class Activity_Animation extends SurfaceView implements Runnable {
 
     }
 
+    public void fixRobot(int x, int y)
+    {
+        myRobot.x = x;
+        myRobot.y = y;
+    }
+
 
     public void AddBlock(int x, int y)
     {
+        if(!blocklist.containsKey(""+x+y))
         blocklist.put(""+x+y, new Cell(x,y));
     }
 
