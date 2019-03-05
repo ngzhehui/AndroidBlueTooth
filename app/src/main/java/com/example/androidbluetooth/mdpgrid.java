@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Environment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -44,13 +45,14 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
 
     Activity_Animation animation_LayoutView;
     float x,y;
-    TextView tv;
+    TextView tv,status;
     boolean block = false;
     boolean robotset = false;
+    boolean auto = true;
     int action = 0; // action 0, 1 brick function, action 2 robot function
     Button BlockBtn, RobotBtn;
     Button StartBtn;
-    Button RotateRightBtn,RotateLeftBtn, ForwardBtn;
+    Button RotateRightBtn,RotateLeftBtn, ForwardBtn, fastbtn, explorebtn, autobtn, manualbtn;;
 
     // Appends the incoming messages and then posting them to the textview
     StringBuilder messages;
@@ -80,7 +82,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
         TimerExample tel = new TimerExample("task1");
 
         Timer t = new Timer();
-        t.scheduleAtFixedRate(tel, 0, 5000);
+        t.scheduleAtFixedRate(tel, 0, 2000);
 
 
         //hash table
@@ -112,6 +114,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
 
         //setContentView(animation_LayoutView);
 
+        status = (TextView) findViewById(R.id.status);
         tv = (TextView) findViewById(R.id.StatusView);
         tv.setMovementMethod(new ScrollingMovementMethod());
 
@@ -125,6 +128,10 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
         RotateLeftBtn = findViewById(R.id.rotateleft);
         RotateRightBtn = findViewById(R.id.rotateright);
         ForwardBtn = findViewById(R.id.straight);
+        fastbtn = findViewById(R.id.fast);
+        explorebtn = findViewById(R.id.explore);
+        autobtn = findViewById(R.id.auto);
+        manualbtn=findViewById(R.id.manu);;
 
 
         BlockBtn.setOnClickListener(new View.OnClickListener() {
@@ -178,6 +185,50 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
             }
         });
 
+        fastbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                byte[] bytes = "beginFastest".getBytes(Charset.defaultCharset());
+                //send those byte to the connection service using the write method in Connectedthread
+                BluetoothConnectionService.write(bytes);
+                //animation_LayoutView.rotateright();
+            }
+        });
+
+        explorebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                byte[] bytes = "beginExplore".getBytes(Charset.defaultCharset());
+                //send those byte to the connection service using the write method in Connectedthread
+                BluetoothConnectionService.write(bytes);
+                //animation_LayoutView.rotateright();
+            }
+        });
+
+        autobtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(auto)
+                {
+                    auto=false;
+                    autobtn.setBackgroundColor(Color.GRAY);
+                }
+                else {
+                    auto=true;
+                    autobtn.setBackgroundColor(Color.CYAN);
+                }
+                animation_LayoutView.auto(auto);
+            }
+        });
+
+        manualbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                animation_LayoutView.manual();
+
+            }
+        });
+
 
         myDb = new DatabaseHelper(this);
 
@@ -220,35 +271,38 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
                 int index =0;
                 String BinaryHex = "";
 
-                animation_LayoutView.AddBlock(1, 0);
-
-
                 for(int k=0;k<75;k++)
                 {
-                //BinaryHex += hashtable[Integer.parseInt(split[3].substring(k),16)];
+                    BinaryHex += hashtable[Integer.parseInt(Character.toString(split[3].charAt(k)),16)];
+                    //int y= Integer.parseInt(Character.toString(split[3].charAt(k)),16);
                 }
 
 
-
                 //for AMDtool
-                        //animation_LayoutView.fixRobot(Integer.parseInt(split[0]),Integer.parseInt(split[1]));
+                animation_LayoutView.fixRobot(Integer.parseInt(split[0])+1,Integer.parseInt(split[1])+1,Integer.parseInt(split[2]));
+
+                messages.append(split[2]+"\n");
+                tv.setText(messages);
 
                         for(int i=0;i<20;i++)//y
                         {
                             for(int j=0;j<15;j++) //x
                             {
-                                if(BinaryHex.substring(index).equals("1")) {
-                                    //animation_LayoutView.AddBlock(j, i);
-                                    //animation_LayoutView.AddBlock(1, 1);
+                                if(BinaryHex.charAt(index) == '1') {
+                                    animation_LayoutView.AddBlock(j,i);
                                 }
                                 index++;
                             }
                         }
 
             }
-
-
-            messages.append("Bluetooth: " + text + "\n");
+            else if(text.substring(0,3).equals("sta"))
+            {
+                int l = text.length();
+                status.setText("Status: "+text.substring(3,l));
+            }
+            else
+                messages.append("Bluetooth: " + text + "\n");
             //tv.setText(messages);
         }
     };
@@ -375,7 +429,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
 
         }
 
-        String msg = String.format("Robot's coordinate (%d,%d)", adjustmentX, adjustmentY);
+        String msg = String.format("coordinate (%d,%d)", adjustmentX-1, adjustmentY-1);
         messages.append("Android: " + msg + "\n");
         byte[] bytes = msg.getBytes(Charset.defaultCharset());
         //send those byte to the connection service using the write method in Connectedthread

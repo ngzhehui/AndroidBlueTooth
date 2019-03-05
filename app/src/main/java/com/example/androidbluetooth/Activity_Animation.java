@@ -18,6 +18,7 @@ public class Activity_Animation extends SurfaceView implements Runnable {
     boolean CanDraw = false;
     boolean createRobot = false;
     boolean test = false;
+    int manualTimer = 1;
     Bitmap background,scaled;
 
     HashMap<String, Cell> blocklist = new HashMap<String, Cell>();
@@ -136,41 +137,27 @@ public class Activity_Animation extends SurfaceView implements Runnable {
 
     private void draw()
     {
-        canvas = surfaceHolder.lockCanvas();
-        canvas.drawBitmap(scaled,0,0,null);
 
-        /*
-        canvas.drawPaint(white);
+            canvas = surfaceHolder.lockCanvas();
+            canvas.drawBitmap(scaled, 0, 0, null);
+
+            for (Cell p : blocklist.values()) {
+                canvas.drawRect((p.x + 1) + (gridSize * p.x), (p.y + 1) + (gridSize * p.y), (p.x + 1) + (gridSize * (p.x + 1)), (p.y + 1) + (gridSize * (p.y + 1)), red); //
+            }
 
 
-        for(int j=0; j<21;j++)
+            drawRobot();
+
+
+            surfaceHolder.unlockCanvasAndPost(canvas);
+
+        if(manualTimer==0)
         {
-            canvas.drawLine(0, gridSize*j, 646, gridSize*j, red);
-        }
-        */
+            manualTimer=1;
 
-
-
-
-        for(Cell p : blocklist.values())
-        {
-            canvas.drawRect((p.x+1)+(gridSize*p.x),(p.y+1)+(gridSize*p.y),(p.x+1)+(gridSize*(p.x+1)),(p.y+1)+(gridSize*(p.y+1)),red); //
+            pause();
         }
 
-
-        //this part is for slowing down robot movement
-        timing++;
-
-        if(timing == 10) {
-            moveRobot();
-            timing = 0;
-        }
-
-        drawRobot();
-
-
-
-        surfaceHolder.unlockCanvasAndPost(canvas);
     }
 
     protected void pause() {
@@ -220,10 +207,50 @@ public class Activity_Animation extends SurfaceView implements Runnable {
 
     }
 
-    public void fixRobot(int x, int y)
+    public void auto(boolean b){
+        if(b)
+            resume();
+        else
+            pause();
+    }
+
+    public void manual(){
+        manualTimer = 0;
+        resume();
+    }
+
+
+
+    public void fixRobot(int x, int y, int d) //for amdtool
     {
         myRobot.x = x;
         myRobot.y = y;
+
+
+        switch (d) {
+            case 0://upward
+                myRobot.dirx = 0;
+                myRobot.diry = -1;
+                myRobot.direction = 0;
+                break;
+            case 90://right
+                myRobot.dirx=1;
+                myRobot.diry=0;
+                myRobot.direction = 1;
+                break;
+            case 180://downwards
+                myRobot.dirx = 0;
+                myRobot.diry = 1;
+                myRobot.direction = 2;
+                break;
+            case 270://left
+                myRobot.dirx = -1;
+                myRobot.diry = 0;
+                myRobot.direction = 3;
+                break;
+            default:
+                break;
+        }
     }
 
 
@@ -244,6 +271,7 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         createRobot = true;
         myRobot.x = x;
         myRobot.y = y;
+        myRobot.rotateRight();
 
     }
 
