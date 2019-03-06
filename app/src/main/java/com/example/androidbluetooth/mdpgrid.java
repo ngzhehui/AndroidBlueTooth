@@ -52,7 +52,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
     boolean auto = true;
     int action = 0; // action 0, 1 brick function, action 2 robot function
     Button BlockBtn, RobotBtn;
-    Button shortcut1,shortcut2,scUpdate;
+    Button shortcut1,shortcut2,scUpdate,Accelerometerbtn;
     public static String[] tempString = new String[2];
     Button RotateRightBtn,RotateLeftBtn, ForwardBtn, fastbtn, explorebtn, autobtn, manualbtn;;
 
@@ -135,6 +135,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
         shortcut1 = findViewById(R.id.shortcut1);
         shortcut2 = findViewById(R.id.shortcut2);
         scUpdate = findViewById(R.id.scUpdate);
+        Accelerometerbtn = findViewById(R.id.accel);
 
         RotateLeftBtn = findViewById(R.id.rotateleft);
         RotateRightBtn = findViewById(R.id.rotateright);
@@ -178,6 +179,13 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
             @Override
             public void onClick(View v) {
                 openDialog();
+            }
+        });
+
+        Accelerometerbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openAccelerometer();
             }
         });
 
@@ -500,6 +508,12 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
         ExampleDialog exampleDialog = new ExampleDialog();
         exampleDialog.show(getSupportFragmentManager(), "example dialog");
 
+    }
+
+    public void openAccelerometer()
+    {
+        accelerometerDialog accer = new accelerometerDialog();
+        accer.show(getSupportFragmentManager(), "example2 dialog");
     }
 
     @Override

@@ -14,21 +14,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
-public class ExampleDialog extends AppCompatDialogFragment implements SensorEventListener {
+public class ExampleDialog extends AppCompatDialogFragment {
     private EditText s1,s2;
     private  ExampleDialogListener listener;
-    private SensorManager sensorManager;
-    Sensor accelerometer;
 
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        s1.setText("x:" +event.values[0] + " y:" + event.values[1] + " z:" + event.values[2]);
-    }
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -61,10 +51,6 @@ public class ExampleDialog extends AppCompatDialogFragment implements SensorEven
         s1.setText(mdpgrid.tempString[0]);
         s2.setText(mdpgrid.tempString[1]);
 
-        sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
-
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
         return builder.create();
 
