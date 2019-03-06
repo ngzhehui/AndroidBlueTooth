@@ -40,18 +40,20 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
+public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, ExampleDialog.ExampleDialogListener {
 
 
     Activity_Animation animation_LayoutView;
     float x,y;
     TextView tv,status;
+    TextView s1edittxt,s2edittxt;
     boolean block = false;
     boolean robotset = false;
     boolean auto = true;
     int action = 0; // action 0, 1 brick function, action 2 robot function
     Button BlockBtn, RobotBtn;
-    Button StartBtn;
+    Button shortcut1,shortcut2,scUpdate;
+    public static String[] tempString = new String[2];
     Button RotateRightBtn,RotateLeftBtn, ForwardBtn, fastbtn, explorebtn, autobtn, manualbtn;;
 
     // Appends the incoming messages and then posting them to the textview
@@ -74,8 +76,10 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
 
 
 
+        /*
         //Use the local broadcast manager again to register the broadcast receiver that we are going to use
         LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("incomingMessage"));
+        /*
 
 
 
@@ -120,12 +124,17 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
         tv = (TextView) findViewById(R.id.StatusView);
         tv.setMovementMethod(new ScrollingMovementMethod());
 
+        s1edittxt = (TextView) findViewById(R.id.s1edittxt);
+        s2edittxt = (TextView) findViewById(R.id.s2edittxt);
+
         BlockBtn = findViewById(R.id.Block);
 
         RobotBtn = findViewById(R.id.robot);
 
 
-        StartBtn = findViewById(R.id.Start);
+        shortcut1 = findViewById(R.id.shortcut1);
+        shortcut2 = findViewById(R.id.shortcut2);
+        scUpdate = findViewById(R.id.scUpdate);
 
         RotateLeftBtn = findViewById(R.id.rotateleft);
         RotateRightBtn = findViewById(R.id.rotateright);
@@ -150,11 +159,28 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
             }
         });
 
-        StartBtn.setOnClickListener(new View.OnClickListener() {
+        shortcut1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Shortcut1();
             }
         });
+
+        shortcut2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Shortcut2();
+            }
+        });
+
+
+        scUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openDialog();
+            }
+        });
+
 
         RotateLeftBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -233,9 +259,9 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
 
 
         //this part is to insert data
-        //tv.setText((myDb.insertData("testing123"))+"");
+        //messages.append((myDb.insertData("testing123"))+"\n");
 
-
+        //messages.append((myDb.updateData("0","NULL"))+"\n");
 
         //This part is to get data from table
         Cursor res = myDb.getAllData();
@@ -245,16 +271,18 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
             return;
         }
         StringBuffer buffer = new StringBuffer();
+
+        int k=0;
         while(res.moveToNext())
         {
-            buffer.append(res.getString(1));
+            tempString[k++]=res.getString(1);
         }
-        //tv.setText(buffer);
+
 
 
 
     }
-
+/*
     ///////////////////////////////////////////BLUETOOTH RECECIVER///////////////////////////////////////////
 
     BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -281,8 +309,6 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
                 //for AMDtool
                 animation_LayoutView.fixRobot(Integer.parseInt(split[0]),Integer.parseInt(split[1]),Integer.parseInt(split[2]));
 
-                messages.append(split[2]+"\n");
-                tv.setText(messages);
 
                         for(int i=0;i<20;i++)//y
                         {
@@ -311,6 +337,8 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
             }
         }
     };
+
+    */
 
     @Override
     protected void onResume() {
@@ -447,6 +475,47 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
         animation_LayoutView.SelectRobot(adjustmentX,19-adjustmentY);
     }
 
+    public void Shortcut1()
+    {
+        //String msg = String.format("Waypont(%d,%d) unselected", x1, 19-y1);
+        //byte[] bytes = msg.getBytes(Charset.defaultCharset());
+        //send those byte to the connection service using the write method in Connectedthread
+        //BluetoothConnectionService.write(bytes);
+        messages.append("Android: " + tempString[0] + "\n");
+        tv.setText(messages);
+    }
+
+    public void Shortcut2()
+    {
+        //String msg = String.format("Waypont(%d,%d) unselected", x1, 19-y1);
+        //byte[] bytes = msg.getBytes(Charset.defaultCharset());
+        //send those byte to the connection service using the write method in Connectedthread
+        //BluetoothConnectionService.write(bytes);
+        messages.append("Android: " + tempString[1] + "\n");
+        tv.setText(messages);
+    }
+
+    public void openDialog()
+    {
+        ExampleDialog exampleDialog = new ExampleDialog();
+        exampleDialog.show(getSupportFragmentManager(), "example dialog");
+
+    }
+
+    @Override
+    public void applyText(String s1, String s2) {
+
+        messages.append("saved: " + s1 + "\n");
+        messages.append("saved: " + s2 + "\n");
+        tv.setText(messages);
+
+        myDb.updateData("0",s1);
+        tempString[0] = s1;
+
+        myDb.updateData("1",s2);
+        tempString[1] = s2;
+
+    }
 
 /*
     public class TimerExample extends TimerTask {

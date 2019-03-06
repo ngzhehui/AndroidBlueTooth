@@ -14,7 +14,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public DatabaseHelper(Context context)
     {
         super(context,DB_NAME, null,DB_VERSION);
-        //SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = this.getWritableDatabase();
     }
 
     @Override
@@ -34,7 +34,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put("id",0);
+        contentValues.put("id",1);
         contentValues.put("text",text);
         long result = db.insert("shortcut",null,contentValues);
         if(result == -1)
@@ -49,5 +49,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("Select * from shortcut",null);
         return res;
+    }
+
+    public boolean updateData(String id, String text)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("id",id);
+        contentValues.put("text",text);
+        long result = db.update("shortcut",contentValues, "id = ?",new String[] {id});
+        if(result == -1)
+        {
+            return false;
+        }
+        else return true;
     }
 }
