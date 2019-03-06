@@ -79,10 +79,12 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
 
 
 
+        /*
         TimerExample tel = new TimerExample("task1");
 
         Timer t = new Timer();
         t.scheduleAtFixedRate(tel, 0, 2000);
+        */
 
 
         //hash table
@@ -151,34 +153,31 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
         StartBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                animation_LayoutView.startrobot();
             }
         });
 
         RotateLeftBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                byte[] bytes = "tl".getBytes(Charset.defaultCharset());
+                byte[] bytes = "L|".getBytes(Charset.defaultCharset());
                 //send those byte to the connection service using the write method in Connectedthread
                 BluetoothConnectionService.write(bytes);
-                animation_LayoutView.rotateleft();
             }
         });
 
         RotateRightBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                byte[] bytes = "tr".getBytes(Charset.defaultCharset());
+                byte[] bytes = "R|".getBytes(Charset.defaultCharset());
                 //send those byte to the connection service using the write method in Connectedthread
                 BluetoothConnectionService.write(bytes);
-                animation_LayoutView.rotateright();
             }
         });
 
         ForwardBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                byte[] bytes = "f".getBytes(Charset.defaultCharset());
+                byte[] bytes = "F|".getBytes(Charset.defaultCharset());
                 //send those byte to the connection service using the write method in Connectedthread
                 BluetoothConnectionService.write(bytes);
                 //animation_LayoutView.rotateright();
@@ -264,22 +263,23 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
             //set the string builder to the textview
             String text = intent.getStringExtra("theMessage");
 
-            if(text.length()>50)
+            if(true)
             {
-                String[] split = text.split(",");
+                String[] split = "0,0,0,E001A0000000000000000000000000000000000000000000000000000000000000000000000,900000000000000000000000000000000000000000000000000000000000000000000000000".split(",");
 
                 int index =0;
-                String BinaryHex = "";
-
+                String BinaryHex = ""; //to record the maps with the block
+                String BinaryExploreHex = ""; //to record the the explore path
                 for(int k=0;k<75;k++)
                 {
-                    BinaryHex += hashtable[Integer.parseInt(Character.toString(split[3].charAt(k)),16)];
+                    BinaryHex += hashtable[Integer.parseInt(Character.toString(split[4].charAt(k)),16)];
                     //int y= Integer.parseInt(Character.toString(split[3].charAt(k)),16);
+                    BinaryExploreHex += hashtable[Integer.parseInt(Character.toString(split[3].charAt(k)),16)];
                 }
 
 
                 //for AMDtool
-                animation_LayoutView.fixRobot(Integer.parseInt(split[0])+1,Integer.parseInt(split[1])+1,Integer.parseInt(split[2]));
+                animation_LayoutView.fixRobot(Integer.parseInt(split[0]),Integer.parseInt(split[1]),Integer.parseInt(split[2]));
 
                 messages.append(split[2]+"\n");
                 tv.setText(messages);
@@ -291,6 +291,10 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
                                 if(BinaryHex.charAt(index) == '1') {
                                     animation_LayoutView.AddBlock(j,i);
                                 }
+
+                                if(BinaryExploreHex.charAt(index) == '1') {
+                                    animation_LayoutView.removePath(j,i);
+                                }
                                 index++;
                             }
                         }
@@ -301,9 +305,10 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
                 int l = text.length();
                 status.setText("Status: "+text.substring(3,l));
             }
-            else
+            else {
                 messages.append("Bluetooth: " + text + "\n");
-            //tv.setText(messages);
+                tv.setText(messages);
+            }
         }
     };
 
@@ -375,9 +380,9 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
     public void AddBlock(float x, float y)
     {
         int x1= (int)(x/43);
-        int y1=(int)(y/43);
-        animation_LayoutView.AddBlock(x1,y1);
-        String msg = String.format("Waypont(%d,%d) selected", x1, y1);
+        int y1= (int)(y/43);
+        animation_LayoutView.AddBlock(x1,19-y1);
+        String msg = String.format("Waypont(%d,%d) selected", x1, 19-y1);
         byte[] bytes = msg.getBytes(Charset.defaultCharset());
         //send those byte to the connection service using the write method in Connectedthread
         BluetoothConnectionService.write(bytes);
@@ -390,8 +395,8 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
     {
         int x1= (int)(x/43);
         int y1=(int)(y/43);
-        animation_LayoutView.RemoveBlock(x1,y1);
-       String msg = String.format("Waypont(%d,%d) unselected", x1, y1);
+        animation_LayoutView.RemoveBlock(x1,19-y1);
+       String msg = String.format("Waypont(%d,%d) unselected", x1, 19-y1);
         byte[] bytes = msg.getBytes(Charset.defaultCharset());
         //send those byte to the connection service using the write method in Connectedthread
         BluetoothConnectionService.write(bytes);
@@ -429,19 +434,21 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
 
         }
 
-        String msg = String.format("coordinate (%d,%d)", adjustmentX-1, adjustmentY-1);
+        String msg = String.format("coordinate (%d,%d)", adjustmentX-1, 19-adjustmentY-1);
         messages.append("Android: " + msg + "\n");
+
+
         byte[] bytes = msg.getBytes(Charset.defaultCharset());
         //send those byte to the connection service using the write method in Connectedthread
         BluetoothConnectionService.write(bytes);
 
 
 
-        animation_LayoutView.SelectRobot(adjustmentX,adjustmentY);
+        animation_LayoutView.SelectRobot(adjustmentX,19-adjustmentY);
     }
 
 
-
+/*
     public class TimerExample extends TimerTask {
         private String name;
 
@@ -468,6 +475,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener {
 
         }
     }
+    */
 
 
 

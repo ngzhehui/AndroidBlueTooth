@@ -22,6 +22,8 @@ public class Activity_Animation extends SurfaceView implements Runnable {
     Bitmap background,scaled;
 
     HashMap<String, Cell> blocklist = new HashMap<String, Cell>();
+    HashMap<String, Cell> unexplorelist1 = new HashMap<String, Cell>();
+    HashMap<String, Cell> unexplorelist2 = new HashMap<String, Cell>();
 
     int gridSize = 42;
 
@@ -56,7 +58,9 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         blue.setColor(Color.BLUE);
 
         white = new Paint();
-        white.setColor(Color.WHITE);
+        white.setColor(Color.GRAY);
+
+        setupUnexplorePath();
 
     }
 
@@ -80,7 +84,9 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         green.setColor(Color.GREEN);
 
         white = new Paint();
-        white.setColor(Color.WHITE);
+        white.setColor(Color.GRAY);
+
+        setupUnexplorePath();
     }
 
     public Activity_Animation(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -103,7 +109,9 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         green.setColor(Color.GREEN);
 
         white = new Paint();
-        white.setColor(Color.WHITE);
+        white.setColor(Color.GRAY);
+
+        setupUnexplorePath();
     }
 
 
@@ -142,8 +150,20 @@ public class Activity_Animation extends SurfaceView implements Runnable {
             canvas.drawBitmap(scaled, 0, 0, null);
 
             for (Cell p : blocklist.values()) {
-                canvas.drawRect((p.x + 1) + (gridSize * p.x), (p.y + 1) + (gridSize * p.y), (p.x + 1) + (gridSize * (p.x + 1)), (p.y + 1) + (gridSize * (p.y + 1)), red); //
+                canvas.drawRect((p.x + 1) + (gridSize * p.x), (19-p.y + 1) + (gridSize * (19-p.y)), (p.x + 1) + (gridSize * (p.x + 1)), (19-p.y + 1) + (gridSize * (19-p.y + 1)), red); //
             }
+
+
+        for (Cell t : unexplorelist1.values()) {
+            canvas.drawRect((t.x + 1) + (gridSize * t.x), (19-t.y + 1) + (gridSize * (19-t.y)), (t.x + 1) + (gridSize * (t.x + 1)), (19-t.y + 1) + (gridSize * (19-t.y + 1)), white); //
+        }
+
+        for (Cell t : unexplorelist2.values()) {
+            canvas.drawRect((t.x + 1) + (gridSize * t.x), (19-t.y + 1) + (gridSize * (19-t.y)), (t.x + 1) + (gridSize * (t.x + 1)), (19-t.y + 1) + (gridSize * (19-t.y + 1)), white); //
+        }
+
+
+
 
 
             drawRobot();
@@ -182,30 +202,14 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         if(createRobot) {
             for (int i = 0; i < 3; i++)
                 for (int j = 0; j < 3; j++)
-                    canvas.drawRect((myRobot.x + i) + (gridSize * (myRobot.x + i - 1)), (myRobot.y + j) + (gridSize * (myRobot.y + j - 1)), (myRobot.x + i) + (gridSize * (myRobot.x + i)), (myRobot.y + j) + (gridSize * (myRobot.y + j)), blue); //
+                    canvas.drawRect((myRobot.x + i) + (gridSize * (myRobot.x + i - 1)), (19-myRobot.y + j) + (gridSize * (19-myRobot.y + j - 1)), (myRobot.x + i) + (gridSize * (myRobot.x + i)), (19-myRobot.y + j) + (gridSize * (19-myRobot.y + j)), blue); //
 
-            canvas.drawRect((myRobot.x + myRobot.dirx) + (gridSize * (myRobot.x + myRobot.dirx)), (myRobot.y + myRobot.diry) + (gridSize * (myRobot.y + myRobot.diry)), (myRobot.x + myRobot.dirx + 1) + (gridSize * (myRobot.x + myRobot.dirx + 1)), (myRobot.y + myRobot.diry + 1) + (gridSize * (myRobot.y + myRobot.diry + 1)), green);
+            canvas.drawRect((myRobot.x + myRobot.dirx) + (gridSize * (myRobot.x + myRobot.dirx)), (19-myRobot.y + myRobot.diry) + (gridSize * (19-myRobot.y + myRobot.diry)), (myRobot.x + myRobot.dirx + 1) + (gridSize * (myRobot.x + myRobot.dirx + 1)), (19-myRobot.y + myRobot.diry + 1) + (gridSize * (19-myRobot.y + myRobot.diry + 1)), green);
 
         }
 
     }
 
-    public void moveRobot()
-    {
-        if(test) {
-            if (blocklist.get((myRobot.x + (myRobot.dirx*2)) + "" + (myRobot.y + (myRobot.diry*2))) == null) {
-
-                if (myRobot.y + (myRobot.diry) != 0 && myRobot.y + (myRobot.diry) != 19 && myRobot.x + (myRobot.dirx) != 0 && myRobot.x + (myRobot.dirx) != 14) {
-                    myRobot.x += myRobot.dirx;
-                    myRobot.y += myRobot.diry;
-                }
-
-            }
-            else
-                test = false;
-        }
-
-    }
 
     public void auto(boolean b){
         if(b)
@@ -271,27 +275,27 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         createRobot = true;
         myRobot.x = x;
         myRobot.y = y;
-        myRobot.rotateRight();
-
     }
 
-    public void startrobot()
+    public void setupUnexplorePath()
     {
-        test= true;
+        for (int y = 0; y < 20; y++) {
+            for (int x = 0; x < 7; x++)
+                unexplorelist1.put(""+x+y, new Cell(x,y));
+        }
+
+        for (int y = 0; y < 20; y++) {
+            for (int x = 7; x < 15; x++)
+                unexplorelist2.put(""+x+y, new Cell(x,y));
+        }
     }
 
-    public void rotateright()
+    public void removePath(int x, int y)
     {
-        myRobot.rotateRight();
+        if(x<7)
+        unexplorelist1.remove(""+x+y);
+        else
+            unexplorelist2.remove(""+x+y);
     }
 
-    public void rotateleft()
-    {
-        myRobot.rotateLeft();
-    }
-
-    public void stoprobot()
-    {
-        test=false;
-    }
 }
