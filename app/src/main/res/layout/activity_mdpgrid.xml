@@ -89,14 +89,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="148dp"
+        android:layout_marginTop="52dp"
         android:layout_marginEnd="8dp"
         android:text="S1"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.985"
+        app:layout_constraintHorizontal_bias="0.983"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/robot" />
+        app:layout_constraintTop_toBottomOf="@+id/confirmbtn" />
 
     <Button
         android:id="@+id/robot"
@@ -157,11 +157,12 @@
 
     <Button
         android:id="@+id/fast"
-        android:layout_width="wrap_content"
+        android:layout_width="116dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="8dp"
+        android:background="@android:color/holo_blue_bright"
         android:text="Fastest path"
         app:layout_constraintEnd_toStartOf="@+id/auto"
         app:layout_constraintHorizontal_bias="0.276"
@@ -222,11 +223,28 @@
         app:layout_constraintTop_toBottomOf="@+id/explore" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/waypointbtn"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/waypoint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.968"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/robot" />
+
+    <Button
+        android:id="@+id/confirmbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
-        tools:layout_editor_absoluteX="504dp"
-        tools:layout_editor_absoluteY="356dp" />
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="8dp"
+        android:text="Confirm"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.989"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/waypointbtn" />
 
 </android.support.constraint.ConstraintLayout>

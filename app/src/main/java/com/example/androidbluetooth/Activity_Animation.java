@@ -7,9 +7,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.math.BigInteger;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 
 public class Activity_Animation extends SurfaceView implements Runnable {
@@ -17,14 +20,19 @@ public class Activity_Animation extends SurfaceView implements Runnable {
     Thread thread = null;
     boolean CanDraw = false;
     boolean createRobot = true;
+    boolean createWaypoint = false;
     boolean test = false;
-    boolean canClearMap = false;
+    boolean reading = true;
+    boolean writing = false;
+    boolean waiting = false;
+    boolean hide = true;
     int manualTimer = 1;
     Bitmap background,scaled;
 
     HashMap<String, Cell> blocklist = new HashMap<String, Cell>();
     HashMap<String, Cell> unexplorelist1 = new HashMap<String, Cell>();
     HashMap<String, Cell> unexplorelist2 = new HashMap<String, Cell>();
+    Cell waypoint = new Cell(0,0);
 
     int gridSize = 42;
 
@@ -32,7 +40,7 @@ public class Activity_Animation extends SurfaceView implements Runnable {
     Robot myRobot = new Robot();
 
 
-    Paint red,blue,green,white;
+    Paint red,blue,green,white, yellow,rred;
 
     int timing = 0;
 
@@ -61,6 +69,12 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         white = new Paint();
         white.setColor(Color.GRAY);
 
+        yellow = new Paint();
+        yellow.setColor(Color.YELLOW);
+
+        rred = new Paint();
+        rred.setColor(Color.RED);
+
         setupUnexplorePath();
 
     }
@@ -87,6 +101,12 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         white = new Paint();
         white.setColor(Color.GRAY);
 
+        yellow = new Paint();
+        yellow.setColor(Color.YELLOW);
+
+        rred = new Paint();
+        rred.setColor(Color.RED);
+
         setupUnexplorePath();
     }
 
@@ -112,14 +132,18 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         white = new Paint();
         white.setColor(Color.GRAY);
 
+        yellow = new Paint();
+        yellow.setColor(Color.YELLOW);
+
+        rred = new Paint();
+        rred.setColor(Color.RED);
+
         setupUnexplorePath();
     }
 
 
     @Override
     public void run() {
-
-
 
         while(CanDraw)
         {
@@ -130,8 +154,6 @@ public class Activity_Animation extends SurfaceView implements Runnable {
             }
 
             draw();
-
-
 
         }
 
@@ -155,7 +177,8 @@ public class Activity_Animation extends SurfaceView implements Runnable {
             }
 
 
-            if(canClearMap) {
+            if(!writing && !hide) {
+                reading=true;
                 for (Cell t : unexplorelist1.values()) {
                     canvas.drawRect((t.x + 1) + (gridSize * t.x), (19 - t.y + 1) + (gridSize * (19 - t.y)), (t.x + 1) + (gridSize * (t.x + 1)), (19 - t.y + 1) + (gridSize * (19 - t.y + 1)), white); //
                 }
@@ -163,8 +186,14 @@ public class Activity_Animation extends SurfaceView implements Runnable {
                 for (Cell t : unexplorelist2.values()) {
                     canvas.drawRect((t.x + 1) + (gridSize * t.x), (19 - t.y + 1) + (gridSize * (19 - t.y)), (t.x + 1) + (gridSize * (t.x + 1)), (19 - t.y + 1) + (gridSize * (19 - t.y + 1)), white); //
                 }
-                canClearMap = false;
+                reading=false;
             }
+
+            if(createWaypoint)
+                canvas.drawRect((waypoint.x + 1) + (gridSize * waypoint.x), (19-waypoint.y + 1) + (gridSize * (19-waypoint.y)), (waypoint.x + 1) + (gridSize * (waypoint.x + 1)), (19-waypoint.y + 1) + (gridSize * (19-waypoint.y + 1)), yellow); //
+
+
+            canvas.drawRect((13) + (gridSize * 12), 1, (15) + (gridSize * (15)), (3) + (gridSize * (3)), rred); //
 
 
 
@@ -295,17 +324,78 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         }
     }
 
-    public void removePath(int x, int y)
+    public void UpdatePath(HashMap<String, Cell> map1, HashMap<String, Cell> map2)
     {
-        if(x<7) {
-            if(unexplorelist1.containsKey(""+x+y))
-            unexplorelist1.remove("" + x + y);
+        waiting = true;
+
+        while(waiting) {
+
+            if(!reading) {
+                writing = true;
+                waiting = false;
+                unexplorelist1 = map1;
+                unexplorelist2 = map2;
+                writing = true;
+            }
+
         }
-        else {
-            if(unexplorelist2.containsKey(""+x+y))
-            unexplorelist2.remove("" + x + y);
-        }
-        canClearMap=true;
+
     }
+
+    public void AddWaypoint(int x, int y)
+    {
+        createWaypoint = true;
+        waypoint.x = x;
+        waypoint.y = y;
+    }
+
+    public void HideUnexplorePath()
+    {
+        hide = true;
+    }
+
+    public void UnhideUnexplorePath()
+    {
+        hide = false;
+    }
+
+
+    //this function will only indicate the block part in the map
+    public void PassMapDetail()
+    {
+
+        int index = 0;
+        String hex= String.format("%d,%d,", waypoint.x, waypoint.y);
+        String binary="";
+        for(int y=0;y<20;y++)
+        {
+            for(int x=0;x<15;x++)
+            {
+                if(index<4)//allow 4bit
+                {
+                    if(blocklist.containsKey(""+x+y))
+                        binary+="1";
+                    else
+                        binary+="0";
+
+
+                    index++;
+
+                }
+                else
+                {
+                    hex += Long.toHexString(Long.parseLong(binary,2));
+                    binary="";
+                    index = 0;
+                }
+            }
+        }
+
+        byte[] bytes = hex.getBytes(Charset.defaultCharset());
+        //send those byte to the connection service using the write method in Connectedthread
+        BluetoothConnectionService.write(bytes);
+
+    }
+
 
 }

@@ -37,6 +37,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -49,13 +50,15 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
     TextView s1edittxt,s2edittxt;
     boolean block = false;
     boolean robotset = false;
+    boolean waypointset = false;
     boolean auto = true;
     int action = 0; // action 0, 1 brick function, action 2 robot function
-    Button BlockBtn, RobotBtn;
+    Button BlockBtn, RobotBtn, waypointBtn, confirmbtn;
     Button shortcut1,shortcut2,scUpdate,Accelerometerbtn;
     public static String[] tempString = new String[2];
     public static boolean accOn = false;
     Button RotateRightBtn,RotateLeftBtn, ForwardBtn, fastbtn, explorebtn, autobtn, manualbtn;;
+    int mode = 0; //0 for quickest path and 1 for exploration
 
     // Appends the incoming messages and then posting them to the textview
     StringBuilder messages;
@@ -64,6 +67,10 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
     DatabaseHelper myDb;
 
     String[] hashtable = new String[16];
+
+
+    HashMap<String, Cell> unexplorelist1 = new HashMap<String, Cell>();
+    HashMap<String, Cell> unexplorelist2 = new HashMap<String, Cell>();
 
 
     @Override
@@ -110,6 +117,9 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
         hashtable[14] = "1110";
         hashtable[15] = "1111";
 
+
+        setupUnexplorePath();
+
         /////////////////////////////////////////////////////ANY CODE BELOW HERE WON"T RUN/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -131,6 +141,10 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
         BlockBtn = findViewById(R.id.Block);
 
         RobotBtn = findViewById(R.id.robot);
+
+        waypointBtn = findViewById(R.id.waypointbtn);
+
+        confirmbtn = findViewById(R.id.confirmbtn);
 
 
         shortcut1 = findViewById(R.id.shortcut1);
@@ -158,6 +172,20 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
             @Override
             public void onClick(View v) {
                 ChangeRobotstatus();
+            }
+        });
+
+        waypointBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ChangeWaypointstatus();
+            }
+        });
+
+        confirmbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                animation_LayoutView.PassMapDetail();
             }
         });
 
@@ -226,6 +254,18 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
                 //send those byte to the connection service using the write method in Connectedthread
                 BluetoothConnectionService.write(bytes);
                 //animation_LayoutView.rotateright();
+
+                //changing stuff when this is click
+                explorebtn.setBackgroundColor(Color.GRAY);
+                fastbtn.setBackgroundColor(Color.CYAN);
+
+                BlockBtn.setVisibility(View.VISIBLE);
+                waypointBtn.setVisibility(View.VISIBLE);
+                RobotBtn.setVisibility(View.VISIBLE);
+                confirmbtn.setVisibility(View.VISIBLE);
+
+                animation_LayoutView.HideUnexplorePath();
+
             }
         });
 
@@ -236,6 +276,18 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
                 //send those byte to the connection service using the write method in Connectedthread
                 BluetoothConnectionService.write(bytes);
                 //animation_LayoutView.rotateright();
+
+                fastbtn.setBackgroundColor(Color.GRAY);
+                explorebtn.setBackgroundColor(Color.CYAN);
+
+                BlockBtn.setVisibility(View.GONE);
+                waypointBtn.setVisibility(View.GONE);
+                RobotBtn.setVisibility(View.GONE);
+                confirmbtn.setVisibility(View.GONE);
+
+                animation_LayoutView.UnhideUnexplorePath();
+
+
             }
         });
 
@@ -329,11 +381,13 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
                                 }
 
                                 if(BinaryExploreHex.charAt(index) == '1') {
-                                    animation_LayoutView.removePath(j,i);
+                                    removePath(j,i);
                                 }
                                 index++;
                             }
                         }
+                        animation_LayoutView.UpdatePath(unexplorelist1,unexplorelist2);
+
 
             }
             else if(text.substring(0,3).equals("sta"))
@@ -390,6 +444,21 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
         }
     }
 
+    private void ChangeWaypointstatus()
+    {
+        if (!waypointset) {
+            waypointset = true;
+            waypointBtn.setBackgroundResource(R.drawable.waypoint2);
+            action = 3;
+        }
+        else {
+            waypointset = false;
+            waypointBtn.setBackgroundResource(R.drawable.waypoint);
+            action = 0;
+        }
+    }
+
+
 
 
 
@@ -407,6 +476,8 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
             case 2:
                 SelectRobot(me.getX(),me.getY());
                 break;
+            case 3:
+                SelectWayPoint(me.getX(),me.getY());
             default:
                 break;
         }
@@ -420,7 +491,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
         int x1= (int)(x/43);
         int y1= (int)(y/43);
         animation_LayoutView.AddBlock(x1,19-y1);
-        String msg = String.format("Waypont(%d,%d) selected", x1, 19-y1);
+        String msg = String.format("block(%d,%d) selected", x1, 19-y1);
         byte[] bytes = msg.getBytes(Charset.defaultCharset());
         //send those byte to the connection service using the write method in Connectedthread
         BluetoothConnectionService.write(bytes);
@@ -434,7 +505,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
         int x1= (int)(x/43);
         int y1=(int)(y/43);
         animation_LayoutView.RemoveBlock(x1,19-y1);
-       String msg = String.format("Waypont(%d,%d) unselected", x1, 19-y1);
+       String msg = String.format("block(%d,%d) unselected", x1, 19-y1);
         byte[] bytes = msg.getBytes(Charset.defaultCharset());
         //send those byte to the connection service using the write method in Connectedthread
         BluetoothConnectionService.write(bytes);
@@ -484,6 +555,22 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
 
         animation_LayoutView.SelectRobot(adjustmentX,19-adjustmentY);
     }
+
+    public void SelectWayPoint(float x, float y)
+    {
+        int x1= (int)(x/43);
+        int y1= (int)(y/43);
+        animation_LayoutView.AddWaypoint(x1,19-y1);
+        String msg = String.format("Waypont(%d,%d) selected", x1, 19-y1);
+        byte[] bytes = msg.getBytes(Charset.defaultCharset());
+        //send those byte to the connection service using the write method in Connectedthread
+        BluetoothConnectionService.write(bytes);
+        messages.append("Android: " + msg + "\n");
+        tv.setText(messages);
+
+    }
+
+
 
     public void Shortcut1()
     {
@@ -538,6 +625,31 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
 
         myDb.updateData("1",s2);
         tempString[1] = s2;
+
+    }
+
+    public void setupUnexplorePath()
+    {
+        for (int y = 0; y < 20; y++) {
+            for (int x = 0; x < 7; x++)
+                unexplorelist1.put(""+x+y, new Cell(x,y));
+        }
+
+        for (int y = 0; y < 20; y++) {
+            for (int x = 7; x < 15; x++)
+                unexplorelist2.put(""+x+y, new Cell(x,y));
+        }
+    }
+
+    public void removePath(int x, int y)
+    {
+
+                if (x < 7) {
+                    unexplorelist1.remove("" + x + y);
+                } else {
+
+                    unexplorelist2.remove("" + x + y);
+                }
 
     }
 
