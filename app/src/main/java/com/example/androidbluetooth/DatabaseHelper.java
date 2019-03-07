@@ -30,13 +30,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertData(String text)
+    public boolean insertData()
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put("id",1);
-        contentValues.put("text",text);
-        long result = db.insert("shortcut",null,contentValues);
+        contentValues.put("id",0);
+        contentValues.put("text","null");
+        ContentValues contentValues2 = new ContentValues();
+        contentValues2.put("id",1);
+        contentValues2.put("text","null");
+        db.insert("shortcut",null,contentValues);
+        long result = db.insert("shortcut",null,contentValues2);
         if(result == -1)
         {
             return false;

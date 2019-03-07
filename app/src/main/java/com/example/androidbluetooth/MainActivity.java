@@ -435,6 +435,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void scanButton(View view) {
         Log.d(TAG, "btnDiscover: Looking for unpaired devices.");
 
+        
+
         //check if bluetooth is already in discovery mode
         if (mBluetoothAdapter.isDiscovering()) {
 
@@ -512,6 +514,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
              */
             //assign the bluetooth device
             mBTDevice = mBTDevices.get(position);
+            sendEditText.setText(mBTDevice.getAddress());
             //start a connection service
             mBluetoothConnection = new BluetoothConnectionService(MainActivity.this);
         }

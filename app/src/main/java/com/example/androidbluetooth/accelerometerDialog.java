@@ -15,23 +15,52 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.nio.charset.Charset;
+
 public class accelerometerDialog extends AppCompatDialogFragment implements SensorEventListener {
     private TextView direction;
     private SensorManager sensorManager;
     Sensor accelerometer;
+    private boolean BackToc = true;
 
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if(event.values[0]>2)
-            direction.setText("LEFT");
-        else if(event.values[0]<-2)
-            direction.setText("RIGHT");
-        else if(event.values[1]>2)
-            direction.setText("UP");
-        else if(event.values[1]<-2)
-            direction.setText("DOWN");
+        if(mdpgrid.accOn) {
+            if (event.values[0] > 3 && BackToc) {
+                direction.setText("LEFT");
+                BackToc = false;
+                byte[] bytes = "tl".getBytes(Charset.defaultCharset());
+                //send those byte to the connection service using the write method in Connectedthread
+                BluetoothConnectionService.write(bytes);
+            } else if (event.values[0] < -3 && BackToc) {
+                direction.setText("RIGHT");
+                BackToc = false;
+                byte[] bytes = "tr".getBytes(Charset.defaultCharset());
+                //send those byte to the connection service using the write method in Connectedthread
+                BluetoothConnectionService.write(bytes);
+            } else if (event.values[1] > 3 && BackToc) {
+                direction.setText("UP");
+                BackToc = false;
+                byte[] bytes = "f".getBytes(Charset.defaultCharset());
+                //send those byte to the connection service using the write method in Connectedthread
+                BluetoothConnectionService.write(bytes);
+
+            } else if (event.values[1] < -3 && BackToc) {
+                direction.setText("DOWN");
+                BackToc = false;
+                byte[] bytes = "f".getBytes(Charset.defaultCharset());
+                //send those byte to the connection service using the write method in Connectedthread
+                BluetoothConnectionService.write(bytes);
+            }else if (event.values[0] < 1 && event.values[0] > -1 && event.values[1] < 1 && event.values[1] > -1)
+            {
+                direction.setText("DIRECTION");
+                BackToc = true;
+            }
+
+        }
     }
+
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
@@ -50,6 +79,7 @@ public class accelerometerDialog extends AppCompatDialogFragment implements Sens
                 .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        mdpgrid.accOn = false;
 
                     }
                 });

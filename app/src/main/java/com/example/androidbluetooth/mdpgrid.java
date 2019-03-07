@@ -54,6 +54,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
     Button BlockBtn, RobotBtn;
     Button shortcut1,shortcut2,scUpdate,Accelerometerbtn;
     public static String[] tempString = new String[2];
+    public static boolean accOn = false;
     Button RotateRightBtn,RotateLeftBtn, ForwardBtn, fastbtn, explorebtn, autobtn, manualbtn;;
 
     // Appends the incoming messages and then posting them to the textview
@@ -276,6 +277,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
         if(res.getCount() == 0)
         {
             //no data exist
+            myDb.insertData();
             return;
         }
         StringBuffer buffer = new StringBuffer();
@@ -491,6 +493,9 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
         //BluetoothConnectionService.write(bytes);
         messages.append("Android: " + tempString[0] + "\n");
         tv.setText(messages);
+        byte[] bytes = tempString[0].getBytes(Charset.defaultCharset());
+        //send those byte to the connection service using the write method in Connectedthread
+        BluetoothConnectionService.write(bytes);
     }
 
     public void Shortcut2()
@@ -501,6 +506,10 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
         //BluetoothConnectionService.write(bytes);
         messages.append("Android: " + tempString[1] + "\n");
         tv.setText(messages);
+
+        byte[] bytes = tempString[1].getBytes(Charset.defaultCharset());
+        //send those byte to the connection service using the write method in Connectedthread
+        BluetoothConnectionService.write(bytes);
     }
 
     public void openDialog()
@@ -512,6 +521,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
 
     public void openAccelerometer()
     {
+        accOn = true;
         accelerometerDialog accer = new accelerometerDialog();
         accer.show(getSupportFragmentManager(), "example2 dialog");
     }
