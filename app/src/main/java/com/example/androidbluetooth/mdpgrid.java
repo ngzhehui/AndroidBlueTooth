@@ -320,16 +320,16 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
                 animation_LayoutView.fixRobot(Integer.parseInt(split[0]),Integer.parseInt(split[1]),Integer.parseInt(split[2]));
 
 
-                        for(int i=0;i<15;i++)//y
+                        for(int i=0;i<20;i++)//y
                         {
-                            for(int j=0;j<20;j++) //x
+                            for(int j=0;j<15;j++) //x
                             {
                                 if(BinaryHex.charAt(index) == '1') {
-                                    animation_LayoutView.AddBlock(i,j);
+                                    animation_LayoutView.AddBlock(j,i);
                                 }
 
                                 if(BinaryExploreHex.charAt(index) == '1') {
-                                    animation_LayoutView.removePath(i,j);
+                                    animation_LayoutView.removePath(j,i);
                                 }
                                 index++;
                             }

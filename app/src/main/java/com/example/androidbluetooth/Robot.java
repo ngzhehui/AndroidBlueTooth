@@ -2,7 +2,7 @@ package com.example.androidbluetooth;
 
 public class Robot {
     int direction = 0;// Upward = 0, Right = 1; Downwards = 2, Left = 3
-    int x = 1, y=18,dirx=0,diry=-1; //coordinate
+    int x = 1, y=1,dirx=0,diry=-1; //coordinate
 
     public void rotateRight()
     {

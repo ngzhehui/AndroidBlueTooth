@@ -15,15 +15,15 @@
 
     <Button
         android:id="@+id/Block"
-        android:layout_width="84dp"
-        android:layout_height="75dp"
+        android:layout_width="91dp"
+        android:layout_height="63dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/brick"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.98"
+        app:layout_constraintHorizontal_bias="0.989"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rotateright" />
 
@@ -32,7 +32,7 @@
         android:layout_width="274dp"
         android:layout_height="153dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="60dp"
         android:layout_marginEnd="8dp"
         android:background="@color/colorPrimary"
         android:scrollbars="vertical"
@@ -44,10 +44,10 @@
 
     <Button
         android:id="@+id/rotateleft"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="32dp"
         android:background="@drawable/leftrotate"
         app:layout_constraintEnd_toEndOf="parent"
@@ -57,8 +57,8 @@
 
     <Button
         android:id="@+id/straight"
-        android:layout_width="51dp"
-        android:layout_height="64dp"
+        android:layout_width="40dp"
+        android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="40dp"
@@ -73,9 +73,10 @@
 
     <Button
         android:id="@+id/rotateright"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="32dp"
         android:background="@drawable/rightrotate"
         app:layout_constraintEnd_toEndOf="parent"
@@ -88,25 +89,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="148dp"
         android:layout_marginEnd="8dp"
         android:text="S1"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.987"
+        app:layout_constraintHorizontal_bias="0.985"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/robot" />
 
     <Button
         android:id="@+id/robot"
-        android:layout_width="88dp"
-        android:layout_height="88dp"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/bot"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.985"
+        app:layout_constraintHorizontal_bias="0.98"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Block" />
 
@@ -185,7 +186,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="8dp"
         android:text="S2"
         android:textSize="18sp"
@@ -199,11 +200,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:text="Update"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.987"
+        app:layout_constraintHorizontal_bias="0.985"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/shortcut2" />
 
@@ -219,5 +220,13 @@
         app:layout_constraintHorizontal_bias="0.094"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/explore" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        tools:layout_editor_absoluteX="504dp"
+        tools:layout_editor_absoluteY="356dp" />
 
 </android.support.constraint.ConstraintLayout>

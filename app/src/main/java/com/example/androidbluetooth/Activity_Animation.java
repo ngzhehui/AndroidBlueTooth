@@ -16,8 +16,9 @@ public class Activity_Animation extends SurfaceView implements Runnable {
 
     Thread thread = null;
     boolean CanDraw = false;
-    boolean createRobot = false;
+    boolean createRobot = true;
     boolean test = false;
+    boolean canClearMap = false;
     int manualTimer = 1;
     Bitmap background,scaled;
 
@@ -154,13 +155,16 @@ public class Activity_Animation extends SurfaceView implements Runnable {
             }
 
 
-        for (Cell t : unexplorelist1.values()) {
-            canvas.drawRect((t.x + 1) + (gridSize * t.x), (19-t.y + 1) + (gridSize * (19-t.y)), (t.x + 1) + (gridSize * (t.x + 1)), (19-t.y + 1) + (gridSize * (19-t.y + 1)), white); //
-        }
+            if(canClearMap) {
+                for (Cell t : unexplorelist1.values()) {
+                    canvas.drawRect((t.x + 1) + (gridSize * t.x), (19 - t.y + 1) + (gridSize * (19 - t.y)), (t.x + 1) + (gridSize * (t.x + 1)), (19 - t.y + 1) + (gridSize * (19 - t.y + 1)), white); //
+                }
 
-        for (Cell t : unexplorelist2.values()) {
-            canvas.drawRect((t.x + 1) + (gridSize * t.x), (19-t.y + 1) + (gridSize * (19-t.y)), (t.x + 1) + (gridSize * (t.x + 1)), (19-t.y + 1) + (gridSize * (19-t.y + 1)), white); //
-        }
+                for (Cell t : unexplorelist2.values()) {
+                    canvas.drawRect((t.x + 1) + (gridSize * t.x), (19 - t.y + 1) + (gridSize * (19 - t.y)), (t.x + 1) + (gridSize * (t.x + 1)), (19 - t.y + 1) + (gridSize * (19 - t.y + 1)), white); //
+                }
+                canClearMap = false;
+            }
 
 
 
@@ -266,6 +270,7 @@ public class Activity_Animation extends SurfaceView implements Runnable {
 
     public  void RemoveBlock(int x, int y)
     {
+
         blocklist.remove(""+x+y);
     }
 
@@ -292,10 +297,15 @@ public class Activity_Animation extends SurfaceView implements Runnable {
 
     public void removePath(int x, int y)
     {
-        if(x<7)
-        unexplorelist1.remove(""+x+y);
-        else
-            unexplorelist2.remove(""+x+y);
+        if(x<7) {
+            if(unexplorelist1.containsKey(""+x+y))
+            unexplorelist1.remove("" + x + y);
+        }
+        else {
+            if(unexplorelist2.containsKey(""+x+y))
+            unexplorelist2.remove("" + x + y);
+        }
+        canClearMap=true;
     }
 
 }
