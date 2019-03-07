@@ -77,10 +77,10 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
 
 
 
-        /*
+
         //Use the local broadcast manager again to register the broadcast receiver that we are going to use
         LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("incomingMessage"));
-        /*
+
 
 
 
@@ -194,7 +194,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
         RotateLeftBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                byte[] bytes = "L|".getBytes(Charset.defaultCharset());
+                byte[] bytes = "AL|".getBytes(Charset.defaultCharset());
                 //send those byte to the connection service using the write method in Connectedthread
                 BluetoothConnectionService.write(bytes);
             }
@@ -203,7 +203,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
         RotateRightBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                byte[] bytes = "R|".getBytes(Charset.defaultCharset());
+                byte[] bytes = "AR|".getBytes(Charset.defaultCharset());
                 //send those byte to the connection service using the write method in Connectedthread
                 BluetoothConnectionService.write(bytes);
             }
@@ -212,7 +212,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
         ForwardBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                byte[] bytes = "F|".getBytes(Charset.defaultCharset());
+                byte[] bytes = "AF|".getBytes(Charset.defaultCharset());
                 //send those byte to the connection service using the write method in Connectedthread
                 BluetoothConnectionService.write(bytes);
                 //animation_LayoutView.rotateright();
@@ -292,7 +292,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
 
 
     }
-/*
+
     ///////////////////////////////////////////BLUETOOTH RECECIVER///////////////////////////////////////////
 
     BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -301,9 +301,9 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
             //set the string builder to the textview
             String text = intent.getStringExtra("theMessage");
 
-            if(true)
+            if(text.length()>150)
             {
-                String[] split = "0,0,0,E001A0000000000000000000000000000000000000000000000000000000000000000000000,900000000000000000000000000000000000000000000000000000000000000000000000000".split(",");
+                String[] split = text.split(",");
 
                 int index =0;
                 String BinaryHex = ""; //to record the maps with the block
@@ -320,16 +320,16 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
                 animation_LayoutView.fixRobot(Integer.parseInt(split[0]),Integer.parseInt(split[1]),Integer.parseInt(split[2]));
 
 
-                        for(int i=0;i<20;i++)//y
+                        for(int i=0;i<15;i++)//y
                         {
-                            for(int j=0;j<15;j++) //x
+                            for(int j=0;j<20;j++) //x
                             {
                                 if(BinaryHex.charAt(index) == '1') {
-                                    animation_LayoutView.AddBlock(j,i);
+                                    animation_LayoutView.AddBlock(i,j);
                                 }
 
                                 if(BinaryExploreHex.charAt(index) == '1') {
-                                    animation_LayoutView.removePath(j,i);
+                                    animation_LayoutView.removePath(i,j);
                                 }
                                 index++;
                             }
@@ -348,7 +348,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
         }
     };
 
-    */
+
 
     @Override
     protected void onResume() {
