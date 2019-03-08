@@ -341,6 +341,27 @@ public class BluetoothConnectionService {
                     connectionStatus.putExtra("connectionStatus","Disconnected"); //key and device
                     LocalBroadcastManager.getInstance(mContext).sendBroadcast(connectionStatus);
                     //there is a problem with the input stream we would want to break the loop to end the connection
+
+
+                    //////////////////////////////////reconnectivity///////////////////////
+                    // If an acceptThread does not exist, we want to start one
+                    if (mInsecureAcceptThread == null) {
+                        mInsecureAcceptThread = new AcceptThread();
+                        //this start() is used to initiate our acceptthread
+                        //method native to the thread class so you can use dot start on any thread object and it initiate it
+                        mInsecureAcceptThread.start();
+                    }
+                    else
+                    {
+                        mInsecureAcceptThread.cancel();
+                        mInsecureAcceptThread = new AcceptThread();
+                        //this start() is used to initiate our acceptthread
+                        //method native to the thread class so you can use dot start on any thread object and it initiate it
+                        mInsecureAcceptThread.start();
+                    }
+
+
+
                     break;
                 }
             }

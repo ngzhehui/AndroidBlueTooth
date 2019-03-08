@@ -75,7 +75,6 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         rred = new Paint();
         rred.setColor(Color.RED);
 
-        setupUnexplorePath();
 
     }
 
@@ -107,7 +106,6 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         rred = new Paint();
         rred.setColor(Color.RED);
 
-        setupUnexplorePath();
     }
 
     public Activity_Animation(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -138,7 +136,6 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         rred = new Paint();
         rred.setColor(Color.RED);
 
-        setupUnexplorePath();
     }
 
 
@@ -177,17 +174,19 @@ public class Activity_Animation extends SurfaceView implements Runnable {
             }
 
 
-            if(!writing && !hide) {
-                reading=true;
-                for (Cell t : unexplorelist1.values()) {
-                    canvas.drawRect((t.x + 1) + (gridSize * t.x), (19 - t.y + 1) + (gridSize * (19 - t.y)), (t.x + 1) + (gridSize * (t.x + 1)), (19 - t.y + 1) + (gridSize * (19 - t.y + 1)), white); //
+
+        for(int y=0;y<20;y++)//y
+        {
+            for(int x=0;x<15;x++) //x
+            {
+                if(!(unexplorelist1.containsKey(""+x+y)||unexplorelist2.containsKey(""+x+y)))
+                {
+                    canvas.drawRect((x + 1) + (gridSize * x), (19 - y + 1) + (gridSize * (19 - y)), (x + 1) + (gridSize * (x + 1)), (19 - y + 1) + (gridSize * (19 - y + 1)), white); //
                 }
 
-                for (Cell t : unexplorelist2.values()) {
-                    canvas.drawRect((t.x + 1) + (gridSize * t.x), (19 - t.y + 1) + (gridSize * (19 - t.y)), (t.x + 1) + (gridSize * (t.x + 1)), (19 - t.y + 1) + (gridSize * (19 - t.y + 1)), white); //
-                }
-                reading=false;
             }
+        }
+
 
             if(createWaypoint)
                 canvas.drawRect((waypoint.x + 1) + (gridSize * waypoint.x), (19-waypoint.y + 1) + (gridSize * (19-waypoint.y)), (waypoint.x + 1) + (gridSize * (waypoint.x + 1)), (19-waypoint.y + 1) + (gridSize * (19-waypoint.y + 1)), yellow); //
@@ -270,17 +269,17 @@ public class Activity_Animation extends SurfaceView implements Runnable {
                 myRobot.diry = -1;
                 myRobot.direction = 0;
                 break;
-            case 90://right
+            case 1://right
                 myRobot.dirx=1;
                 myRobot.diry=0;
                 myRobot.direction = 1;
                 break;
-            case 180://downwards
+            case 2://downwards
                 myRobot.dirx = 0;
                 myRobot.diry = 1;
                 myRobot.direction = 2;
                 break;
-            case 270://left
+            case 3://left
                 myRobot.dirx = -1;
                 myRobot.diry = 0;
                 myRobot.direction = 3;
@@ -311,33 +310,16 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         myRobot.y = y;
     }
 
-    public void setupUnexplorePath()
+    public void UpdatePath(int x, int y)
     {
-        for (int y = 0; y < 20; y++) {
-            for (int x = 0; x < 7; x++)
-                unexplorelist1.put(""+x+y, new Cell(x,y));
+        if(x<7) {
+            if(!unexplorelist1.containsKey(""+x+y))
+            unexplorelist1.put("" + x + y, new Cell(x, y));
         }
+        else {
 
-        for (int y = 0; y < 20; y++) {
-            for (int x = 7; x < 15; x++)
-                unexplorelist2.put(""+x+y, new Cell(x,y));
-        }
-    }
-
-    public void UpdatePath(HashMap<String, Cell> map1, HashMap<String, Cell> map2)
-    {
-        waiting = true;
-
-        while(waiting) {
-
-            if(!reading) {
-                writing = true;
-                waiting = false;
-                unexplorelist1 = map1;
-                unexplorelist2 = map2;
-                writing = true;
-            }
-
+            if(!unexplorelist2.containsKey("" + x + y))
+            unexplorelist2.put("" + x + y, new Cell(x, y));
         }
 
     }

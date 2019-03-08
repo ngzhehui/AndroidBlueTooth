@@ -118,8 +118,6 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
         hashtable[15] = "1111";
 
 
-        setupUnexplorePath();
-
         /////////////////////////////////////////////////////ANY CODE BELOW HERE WON"T RUN/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -381,12 +379,12 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
                                 }
 
                                 if(BinaryExploreHex.charAt(index) == '1') {
-                                    removePath(j,i);
+                                    animation_LayoutView.UpdatePath(j,i);
                                 }
                                 index++;
                             }
                         }
-                        animation_LayoutView.UpdatePath(unexplorelist1,unexplorelist2);
+
 
 
             }
@@ -628,30 +626,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
 
     }
 
-    public void setupUnexplorePath()
-    {
-        for (int y = 0; y < 20; y++) {
-            for (int x = 0; x < 7; x++)
-                unexplorelist1.put(""+x+y, new Cell(x,y));
-        }
 
-        for (int y = 0; y < 20; y++) {
-            for (int x = 7; x < 15; x++)
-                unexplorelist2.put(""+x+y, new Cell(x,y));
-        }
-    }
-
-    public void removePath(int x, int y)
-    {
-
-                if (x < 7) {
-                    unexplorelist1.remove("" + x + y);
-                } else {
-
-                    unexplorelist2.remove("" + x + y);
-                }
-
-    }
 
 /*
     public class TimerExample extends TimerTask {
