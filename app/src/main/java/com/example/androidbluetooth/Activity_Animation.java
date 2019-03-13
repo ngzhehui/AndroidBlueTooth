@@ -28,11 +28,14 @@ public class Activity_Animation extends SurfaceView implements Runnable {
     boolean hide = true;
     int manualTimer = 1;
     Bitmap background,scaled;
+    Bitmap uparrow,rightarrow,downarrow,leftarroaw;
+
 
     HashMap<String, Cell> blocklist = new HashMap<String, Cell>();
     HashMap<String, Cell> unexplorelist1 = new HashMap<String, Cell>();
     HashMap<String, Cell> unexplorelist2 = new HashMap<String, Cell>();
     HashMap<String, Cell> pathTravel = new HashMap<String, Cell>();
+    HashMap<String, Arrow> Arrows = new HashMap<String, Arrow>();
     Cell waypoint = new Cell(1,1);
 
     int gridSize = 42;
@@ -57,6 +60,10 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         super(context);
         surfaceHolder = getHolder();
         background = BitmapFactory.decodeResource(getResources(),R.drawable.grid);
+        uparrow = BitmapFactory.decodeResource(getResources(),R.drawable.uparrow);
+        rightarrow= BitmapFactory.decodeResource(getResources(),R.drawable.rarrow);
+        downarrow= BitmapFactory.decodeResource(getResources(),R.drawable.darrow);
+        leftarroaw= BitmapFactory.decodeResource(getResources(),R.drawable.larrow);
 
         float scale = (float)background.getHeight()/861;
         int newWidth = Math.round(background.getWidth()/scale);
@@ -85,6 +92,10 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         super(context, attrs);
         surfaceHolder = getHolder();
         background = BitmapFactory.decodeResource(getResources(),R.drawable.grid);
+        uparrow = BitmapFactory.decodeResource(getResources(),R.drawable.uparrow);
+        rightarrow= BitmapFactory.decodeResource(getResources(),R.drawable.rarrow);
+        downarrow= BitmapFactory.decodeResource(getResources(),R.drawable.darrow);
+        leftarroaw= BitmapFactory.decodeResource(getResources(),R.drawable.larrow);
 
         float scale = (float)background.getHeight()/861;
         int newWidth = Math.round(background.getWidth()/scale);
@@ -115,6 +126,10 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         super(context, attrs, defStyleAttr);
         surfaceHolder = getHolder();
         background = BitmapFactory.decodeResource(getResources(),R.drawable.grid);
+        uparrow = BitmapFactory.decodeResource(getResources(),R.drawable.uparrow);
+        rightarrow= BitmapFactory.decodeResource(getResources(),R.drawable.rarrow);
+        downarrow= BitmapFactory.decodeResource(getResources(),R.drawable.darrow);
+        leftarroaw= BitmapFactory.decodeResource(getResources(),R.drawable.larrow);
 
         float scale = (float)background.getHeight()/861;
         int newWidth = Math.round(background.getWidth()/scale);
@@ -200,7 +215,29 @@ public class Activity_Animation extends SurfaceView implements Runnable {
                     canvas.drawRect((x + 1) + (gridSize * x), (19 - y + 1) + (gridSize * (19 - y)), (x + 1) + (gridSize * (x + 1)), (19 - y + 1) + (gridSize * (19 - y + 1)), yellow);
                 }; //}
 
-                if(blocklist.containsKey(""+x+","+y)) {
+                if(Arrows.containsKey(""+x+","+y))
+                {
+                    Arrow arrow = Arrows.get(""+x+","+y);
+
+                    switch (arrow.direction) {
+                        case 0://upwards
+                            canvas.drawBitmap(uparrow, (x + 1) + (gridSize * x), (19 - y + 1) + (gridSize * (19 - y)), null);
+                            break;
+                        case 1://right
+                            canvas.drawBitmap(rightarrow, (x + 1) + (gridSize * x), (19 - y + 1) + (gridSize * (19 - y)), null);
+                            break;
+                        case 2://downwards
+                            canvas.drawBitmap(downarrow, (x + 1) + (gridSize * x), (19 - y + 1) + (gridSize * (19 - y)), null);
+                            break;
+                        case 3://left
+                            canvas.drawBitmap(leftarroaw, (x + 1) + (gridSize * x), (19 - y + 1) + (gridSize * (19 - y)), null);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                else if(blocklist.containsKey(""+x+","+y)) {
                     canvas.drawRect((x + 1) + (gridSize * x), (19 - y + 1) + (gridSize * (19 - y)), (x + 1) + (gridSize * (x + 1)), (19 - y + 1) + (gridSize * (19 - y + 1)), red); //
                 }
 
@@ -220,6 +257,9 @@ public class Activity_Animation extends SurfaceView implements Runnable {
 
 
             drawRobot();
+
+
+
 
 
             surfaceHolder.unlockCanvasAndPost(canvas);
@@ -314,6 +354,12 @@ public class Activity_Animation extends SurfaceView implements Runnable {
     {
         if(!blocklist.containsKey(""+x+","+y))
         blocklist.put(""+x+","+y, new Cell(x,y));
+    }
+
+    public void AddArrow(int x, int y, int direction)
+    {
+        if(!Arrows.containsKey(""+x+","+y))
+            Arrows.put(""+x+","+y, new Arrow(direction));
     }
 
 

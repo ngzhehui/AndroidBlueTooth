@@ -57,6 +57,9 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
     Button shortcut1,shortcut2,scUpdate,Accelerometerbtn;
 
     Button unlockbtn;
+    int xx = 0;
+    int yy = 0;
+    int rot = 0;
 
     public static String[] tempString = new String[2];
     public static boolean accOn = false;
@@ -165,10 +168,12 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
         unlockbtn=findViewById(R.id.unlockbtn);
 
 
+
         unlockbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                animation_LayoutView.changelock();
+
+                animation_LayoutView.AddArrow(xx++,yy++,rot++%4);
             }
         });
 
@@ -413,7 +418,13 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
                 messages.append("Obstacles: " + removedO + "\n");
                 tv.setText(messages);
 
+            }
 
+            else if(text.substring(0,1).equals("A"))
+            {
+                String removedP = text.substring(1);
+                String[] split = removedP.split(",");
+                animation_LayoutView.AddArrow(Integer.parseInt(split[0]),Integer.parseInt(split[1]),Integer.parseInt(split[2]));
             }
 
             else if(text.length()>150)
