@@ -247,4 +247,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/waypointbtn" />
 
+    <Button
+        android:id="@+id/unlockbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
+        android:text="Unlock"
+        app:layout_constraintEnd_toStartOf="@+id/StatusView"
+        app:layout_constraintStart_toEndOf="@+id/accel"
+        app:layout_constraintTop_toBottomOf="@+id/manu" />
+
 </android.support.constraint.ConstraintLayout>

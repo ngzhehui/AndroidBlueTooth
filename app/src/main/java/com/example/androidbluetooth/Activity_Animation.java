@@ -32,9 +32,12 @@ public class Activity_Animation extends SurfaceView implements Runnable {
     HashMap<String, Cell> blocklist = new HashMap<String, Cell>();
     HashMap<String, Cell> unexplorelist1 = new HashMap<String, Cell>();
     HashMap<String, Cell> unexplorelist2 = new HashMap<String, Cell>();
-    Cell waypoint = new Cell(0,0);
+    HashMap<String, Cell> pathTravel = new HashMap<String, Cell>();
+    Cell waypoint = new Cell(1,1);
 
     int gridSize = 42;
+
+    int lock = 1;
 
 
     Robot myRobot = new Robot();
@@ -169,20 +172,38 @@ public class Activity_Animation extends SurfaceView implements Runnable {
             canvas = surfaceHolder.lockCanvas();
             canvas.drawBitmap(scaled, 0, 0, null);
 
+            /*
             for (Cell p : blocklist.values()) {
                 canvas.drawRect((p.x + 1) + (gridSize * p.x), (19-p.y + 1) + (gridSize * (19-p.y)), (p.x + 1) + (gridSize * (p.x + 1)), (19-p.y + 1) + (gridSize * (19-p.y + 1)), red); //
             }
+            */
 
 
+
+            /*
+        for (Cell p : pathTravel.values()) {
+            canvas.drawRect((p.x + 1) + (gridSize * p.x), (19-p.y + 1) + (gridSize * (19-p.y)), (p.x + 1) + (gridSize * (p.x + 1)), (19-p.y + 1) + (gridSize * (19-p.y + 1)), yellow); //
+        }
+        */
 
         for(int y=0;y<20;y++)//y
         {
             for(int x=0;x<15;x++) //x
             {
-                if(!(unexplorelist1.containsKey(""+x+y)||unexplorelist2.containsKey(""+x+y)))
+                if(!(unexplorelist1.containsKey(x+","+ y)||unexplorelist2.containsKey(x+","+ y)))
                 {
                     canvas.drawRect((x + 1) + (gridSize * x), (19 - y + 1) + (gridSize * (19 - y)), (x + 1) + (gridSize * (x + 1)), (19 - y + 1) + (gridSize * (19 - y + 1)), white); //
                 }
+                //this code is expensive, so if can render without having error, don't use this method
+                else if(pathTravel.containsKey(""+x+","+y))
+                {
+                    canvas.drawRect((x + 1) + (gridSize * x), (19 - y + 1) + (gridSize * (19 - y)), (x + 1) + (gridSize * (x + 1)), (19 - y + 1) + (gridSize * (19 - y + 1)), yellow);
+                }; //}
+
+                if(blocklist.containsKey(""+x+","+y)) {
+                    canvas.drawRect((x + 1) + (gridSize * x), (19 - y + 1) + (gridSize * (19 - y)), (x + 1) + (gridSize * (x + 1)), (19 - y + 1) + (gridSize * (19 - y + 1)), red); //
+                }
+
 
             }
         }
@@ -203,12 +224,6 @@ public class Activity_Animation extends SurfaceView implements Runnable {
 
             surfaceHolder.unlockCanvasAndPost(canvas);
 
-        if(manualTimer==0)
-        {
-            manualTimer=1;
-
-            pause();
-        }
 
     }
 
@@ -240,6 +255,11 @@ public class Activity_Animation extends SurfaceView implements Runnable {
 
         }
 
+    }
+
+    public void changelock()
+    {
+        lock = 0;
     }
 
 
@@ -292,14 +312,23 @@ public class Activity_Animation extends SurfaceView implements Runnable {
 
     public void AddBlock(int x, int y)
     {
-        if(!blocklist.containsKey(""+x+y))
-        blocklist.put(""+x+y, new Cell(x,y));
+        if(!blocklist.containsKey(""+x+","+y))
+        blocklist.put(""+x+","+y, new Cell(x,y));
     }
+
+
+    public void updateTravelPath( HashMap<String, Cell> newpathTravel , int changes)
+    {
+        if(changes>0)
+        pathTravel= newpathTravel;
+    }
+
+
 
     public  void RemoveBlock(int x, int y)
     {
 
-        blocklist.remove(""+x+y);
+        blocklist.remove(""+x+","+y);
     }
 
     public  void SelectRobot(int x, int y)
@@ -313,15 +342,17 @@ public class Activity_Animation extends SurfaceView implements Runnable {
     public void UpdatePath(int x, int y)
     {
         if(x<7) {
-            if(!unexplorelist1.containsKey(""+x+y))
-            unexplorelist1.put("" + x + y, new Cell(x, y));
+            if(!unexplorelist1.containsKey(""+x+","+y)) {
+                Log.d("explored", "x: " + x + ", y: " + y);
+                unexplorelist1.put("" + x+","+ y, new Cell(x, y));
+            }
         }
         else {
-
-            if(!unexplorelist2.containsKey("" + x + y))
-            unexplorelist2.put("" + x + y, new Cell(x, y));
+            if(!unexplorelist2.containsKey(""+x+","+y)) {
+                Log.d("explored", "x: " + x + ", y: " + y);
+                unexplorelist2.put("" + x+","+ y, new Cell(x, y));
+            }
         }
-
     }
 
     public void AddWaypoint(int x, int y)
@@ -331,9 +362,12 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         waypoint.y = y;
     }
 
-    public void HideUnexplorePath()
+    public void BeginFastestPath()
     {
-        hide = true;
+        String msg= String.format("PFP%d,%d,18,13", waypoint.y, waypoint.x);
+        byte[] bytes = msg.getBytes(Charset.defaultCharset());
+        //send those byte to the connection service using the write method in Connectedthread
+        BluetoothConnectionService.write(bytes);
     }
 
     public void UnhideUnexplorePath()
@@ -346,32 +380,7 @@ public class Activity_Animation extends SurfaceView implements Runnable {
     public void PassMapDetail()
     {
 
-        int index = 0;
-        String hex= String.format("%d,%d,", waypoint.x, waypoint.y);
-        String binary="";
-        for(int y=0;y<20;y++)
-        {
-            for(int x=0;x<15;x++)
-            {
-                if(index<4)//allow 4bit
-                {
-                    if(blocklist.containsKey(""+x+y))
-                        binary+="1";
-                    else
-                        binary+="0";
-
-
-                    index++;
-
-                }
-                else
-                {
-                    hex += Long.toHexString(Long.parseLong(binary,2));
-                    binary="";
-                    index = 0;
-                }
-            }
-        }
+        String hex= String.format("PFP%d,%d,18,13", waypoint.y, waypoint.x);
 
         byte[] bytes = hex.getBytes(Charset.defaultCharset());
         //send those byte to the connection service using the write method in Connectedthread

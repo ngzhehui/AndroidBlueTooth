@@ -55,10 +55,15 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
     int action = 0; // action 0, 1 brick function, action 2 robot function
     Button BlockBtn, RobotBtn, waypointBtn, confirmbtn;
     Button shortcut1,shortcut2,scUpdate,Accelerometerbtn;
+
+    Button unlockbtn;
+
     public static String[] tempString = new String[2];
     public static boolean accOn = false;
     Button RotateRightBtn,RotateLeftBtn, ForwardBtn, fastbtn, explorebtn, autobtn, manualbtn;;
     int mode = 0; //0 for quickest path and 1 for exploration
+    int forsendmsg = 0;
+    int forExploredPath = 0;
 
     // Appends the incoming messages and then posting them to the textview
     StringBuilder messages;
@@ -69,8 +74,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
     String[] hashtable = new String[16];
 
 
-    HashMap<String, Cell> unexplorelist1 = new HashMap<String, Cell>();
-    HashMap<String, Cell> unexplorelist2 = new HashMap<String, Cell>();
+    HashMap<String, Cell> pathTravel = new HashMap<String, Cell>();
 
 
     @Override
@@ -156,7 +160,17 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
         fastbtn = findViewById(R.id.fast);
         explorebtn = findViewById(R.id.explore);
         autobtn = findViewById(R.id.auto);
-        manualbtn=findViewById(R.id.manu);;
+        manualbtn=findViewById(R.id.manu);
+
+        unlockbtn=findViewById(R.id.unlockbtn);
+
+
+        unlockbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                animation_LayoutView.changelock();
+            }
+        });
 
 
         BlockBtn.setOnClickListener(new View.OnClickListener() {
@@ -248,9 +262,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
         fastbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                byte[] bytes = "beginFastest".getBytes(Charset.defaultCharset());
-                //send those byte to the connection service using the write method in Connectedthread
-                BluetoothConnectionService.write(bytes);
+
                 //animation_LayoutView.rotateright();
 
                 //changing stuff when this is click
@@ -262,7 +274,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
                 RobotBtn.setVisibility(View.VISIBLE);
                 confirmbtn.setVisibility(View.VISIBLE);
 
-                animation_LayoutView.HideUnexplorePath();
+                //animation_LayoutView.BeginFastestPath();
 
             }
         });
@@ -270,7 +282,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
         explorebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                byte[] bytes = "beginExplore".getBytes(Charset.defaultCharset());
+                byte[] bytes = "PEP".getBytes(Charset.defaultCharset());
                 //send those byte to the connection service using the write method in Connectedthread
                 BluetoothConnectionService.write(bytes);
                 //animation_LayoutView.rotateright();
@@ -283,7 +295,7 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
                 RobotBtn.setVisibility(View.GONE);
                 confirmbtn.setVisibility(View.GONE);
 
-                animation_LayoutView.UnhideUnexplorePath();
+                //animation_LayoutView.UnhideUnexplorePath();
 
 
             }
@@ -350,8 +362,61 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
         public void onReceive(Context context, Intent intent) {
             //set the string builder to the textview
             String text = intent.getStringExtra("theMessage");
+            forsendmsg = 0;
 
-            if(text.length()>150)
+
+
+            if(text.substring(0,1).equals("P"))
+            {
+                forExploredPath = 1;
+                //recevied x,y,x,y
+                String removedP = text.substring(1);
+                String[] split = removedP.split(",");
+
+                for(int i = 0; i<split.length;i=i+2)
+                {
+                   AddPath(Integer.parseInt(split[i]),Integer.parseInt(split[i+1]));
+                }
+
+                animation_LayoutView.updateTravelPath(pathTravel,forExploredPath);
+
+
+            }
+            else if(text.substring(0,2).equals("WP"))
+            {
+
+                if(forsendmsg==0)
+                animation_LayoutView.PassMapDetail();
+            }
+            else if(text.substring(0,1).equals("U"))
+            {
+                String removedP = text.substring(1);
+                String[] split = removedP.split(",");
+                animation_LayoutView.fixRobot(Integer.parseInt(split[0]),Integer.parseInt(split[1]),Integer.parseInt(split[2]));
+
+            }
+
+            else if(text.substring(0,1).equals("E"))
+            {
+                String removedE = text.substring(1);
+
+                messages.append("Explored: " + removedE + "\n");
+                tv.setText(messages);
+
+
+            }
+
+            else if(text.substring(0,1).equals("O"))
+            {
+                String removedO = text.substring(1);
+
+                messages.append("Obstacles: " + removedO + "\n");
+                tv.setText(messages);
+
+
+            }
+
+            else if(text.length()>150)
             {
                 String[] split = text.split(",");
 
@@ -365,38 +430,37 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
                     BinaryExploreHex += hashtable[Integer.parseInt(Character.toString(split[3].charAt(k)),16)];
                 }
 
+                Log.d("biBlock", BinaryHex);
+                Log.d("biExplore", BinaryExploreHex);
+
 
                 //for AMDtool
                 animation_LayoutView.fixRobot(Integer.parseInt(split[0]),Integer.parseInt(split[1]),Integer.parseInt(split[2]));
 
 
-                        for(int i=0;i<20;i++)//y
-                        {
-                            for(int j=0;j<15;j++) //x
-                            {
-                                if(BinaryHex.charAt(index) == '1') {
-                                    animation_LayoutView.AddBlock(j,i);
-                                }
-
-                                if(BinaryExploreHex.charAt(index) == '1') {
-                                    animation_LayoutView.UpdatePath(j,i);
-                                }
-                                index++;
-                            }
+                for(int i=0;i<20;i++)//y
+                {
+                    for(int j=0;j<15;j++) //x
+                    {
+                        if(BinaryHex.charAt(index) == '1') {
+                            animation_LayoutView.AddBlock(j,i);
                         }
 
-
+                        if(BinaryExploreHex.charAt(index) == '1') {
+                            animation_LayoutView.UpdatePath(j,i);
+                        }
+                        index++;
+                    }
+                }
 
             }
-            else if(text.substring(0,3).equals("sta"))
+            else
             {
-                int l = text.length();
-                status.setText("Status: "+text.substring(3,l));
-            }
-            else {
                 messages.append("Bluetooth: " + text + "\n");
                 tv.setText(messages);
-            }
+        }
+
+            forsendmsg = 0;
         }
     };
 
@@ -624,6 +688,14 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
         myDb.updateData("1",s2);
         tempString[1] = s2;
 
+    }
+
+    public void AddPath(int x, int y)
+    {
+        if(!pathTravel.containsKey(""+x+","+y)) {
+            pathTravel.put("" + x +","+ y, new Cell(x, y));
+            forExploredPath = 1;
+        }
     }
 
 

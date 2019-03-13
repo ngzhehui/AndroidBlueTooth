@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 //store the device
-                if(device.getAddress().equals("B8:27:EB:85:0F:5D")||device.getAddress().equals("00:08:CA:6B:26:F4"))
+                if(device.getAddress().equals("B8:27:EB:85:0F:5D")||device.getAddress().equals("00:08:CA:6B:26:F4")||device.getAddress().equals("9C:B6:D0:1A:DB:86"))
                 mBTDevices.add(device);
                 /**
                  *get some property of the device
