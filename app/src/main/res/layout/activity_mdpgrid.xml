@@ -254,7 +254,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="8dp"
-        android:text="Unlock"
+        android:text="Calibrate"
         app:layout_constraintEnd_toStartOf="@+id/StatusView"
         app:layout_constraintStart_toEndOf="@+id/accel"
         app:layout_constraintTop_toBottomOf="@+id/manu" />

@@ -57,9 +57,6 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
     Button shortcut1,shortcut2,scUpdate,Accelerometerbtn;
 
     Button unlockbtn;
-    int xx = 0;
-    int yy = 0;
-    int rot = 0;
 
     public static String[] tempString = new String[2];
     public static boolean accOn = false;
@@ -72,9 +69,13 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
     StringBuilder messages;
 
 
+    int[][] Blocks=new int[20][15];
+
     DatabaseHelper myDb;
 
     String[] hashtable = new String[16];
+
+    int test = 0;
 
 
     HashMap<String, Cell> pathTravel = new HashMap<String, Cell>();
@@ -90,6 +91,10 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
 
 
 
+        //making 2d array = 0
+        for(int i=0;i<20;i++)
+            for(int j=0;j<15;j++)
+                Blocks[i][j]=0;
 
 
         //Use the local broadcast manager again to register the broadcast receiver that we are going to use
@@ -172,8 +177,9 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
         unlockbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                animation_LayoutView.AddArrow(xx++,yy++,rot++%4);
+                byte[] bytes = "AC".getBytes(Charset.defaultCharset());
+                //send those byte to the connection service using the write method in Connectedthread
+                BluetoothConnectionService.write(bytes);
             }
         });
 
@@ -453,8 +459,9 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
                 {
                     for(int j=0;j<15;j++) //x
                     {
-                        if(BinaryHex.charAt(index) == '1') {
-                            animation_LayoutView.AddBlock(j,i);
+                        if(BinaryHex.charAt(index) != Blocks[i][j]) {
+                            Blocks[i][j] = Integer.parseInt(Character.toString(BinaryHex.charAt(index)));
+                            CheckBlockUpdate(Blocks[i][j],j,i);
                         }
 
                         if(BinaryExploreHex.charAt(index) == '1') {
@@ -640,6 +647,15 @@ public class mdpgrid extends AppCompatActivity implements View.OnTouchListener, 
         BluetoothConnectionService.write(bytes);
         messages.append("Android: " + msg + "\n");
         tv.setText(messages);
+
+    }
+
+    public void CheckBlockUpdate(int block,int x, int y)
+    {
+        if(block==0)
+            animation_LayoutView.RemoveBlock(x,y);
+        else
+            animation_LayoutView.AddBlock(x,y);
 
     }
 

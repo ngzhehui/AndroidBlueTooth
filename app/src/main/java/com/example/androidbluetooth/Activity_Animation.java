@@ -397,9 +397,8 @@ public class Activity_Animation extends SurfaceView implements Runnable {
 
 
 
-    public  void RemoveBlock(int x, int y)
+    public void RemoveBlock(int x, int y)
     {
-
         blocklist.remove(""+x+","+y);
     }
 
