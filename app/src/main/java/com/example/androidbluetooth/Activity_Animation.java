@@ -29,6 +29,7 @@ public class Activity_Animation extends SurfaceView implements Runnable {
     int manualTimer = 1;
     Bitmap background,scaled;
     Bitmap uparrow,rightarrow,downarrow,leftarroaw;
+    Bitmap uscaled,rscaled,dscaled,lscaled;
 
 
     HashMap<String, Cell> blocklist = new HashMap<String, Cell>();
@@ -70,6 +71,15 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         int newHeight = Math.round(background.getHeight()/scale);
         scaled = Bitmap.createScaledBitmap(background, newWidth, newHeight, true);
 
+        float scalearrow = (float)uparrow.getHeight()/42;
+        int newWidthh = Math.round(uparrow.getWidth()/scalearrow);
+        int newHeightt = Math.round(uparrow.getHeight()/scalearrow);
+        uscaled = Bitmap.createScaledBitmap(uparrow, newWidthh, newHeightt, true);
+        rscaled = Bitmap.createScaledBitmap(rightarrow, newWidthh, newHeightt, true);
+        dscaled = Bitmap.createScaledBitmap(leftarroaw, newWidthh, newHeightt, true);
+        lscaled = Bitmap.createScaledBitmap(downarrow, newWidthh, newHeightt, true);
+
+
         red = new Paint();
         red.setColor(Color.BLACK);
 
@@ -101,6 +111,14 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         int newWidth = Math.round(background.getWidth()/scale);
         int newHeight = Math.round(background.getHeight()/scale);
         scaled = Bitmap.createScaledBitmap(background, newWidth, newHeight, true);
+
+        float scalearrow = (float)uparrow.getHeight()/42;
+        int newWidthh = Math.round(uparrow.getWidth()/scalearrow);
+        int newHeightt = Math.round(uparrow.getHeight()/scalearrow);
+        uscaled = Bitmap.createScaledBitmap(uparrow, newWidthh, newHeightt, true);
+        rscaled = Bitmap.createScaledBitmap(rightarrow, newWidthh, newHeightt, true);
+        dscaled = Bitmap.createScaledBitmap(leftarroaw, newWidthh, newHeightt, true);
+        lscaled = Bitmap.createScaledBitmap(downarrow, newWidthh, newHeightt, true);
 
         red = new Paint();
         red.setColor(Color.BLACK);
@@ -135,6 +153,14 @@ public class Activity_Animation extends SurfaceView implements Runnable {
         int newWidth = Math.round(background.getWidth()/scale);
         int newHeight = Math.round(background.getHeight()/scale);
         scaled = Bitmap.createScaledBitmap(background, newWidth, newHeight, true);
+
+        float scalearrow = (float)uparrow.getHeight()/42;
+        int newWidthh = Math.round(uparrow.getWidth()/scalearrow);
+        int newHeightt = Math.round(uparrow.getHeight()/scalearrow);
+        uscaled = Bitmap.createScaledBitmap(uparrow, newWidthh, newHeightt, true);
+        rscaled = Bitmap.createScaledBitmap(rightarrow, newWidthh, newHeightt, true);
+        dscaled = Bitmap.createScaledBitmap(leftarroaw, newWidthh, newHeightt, true);
+        lscaled = Bitmap.createScaledBitmap(downarrow, newWidthh, newHeightt, true);
 
         red = new Paint();
         red.setColor(Color.BLACK);
@@ -221,16 +247,16 @@ public class Activity_Animation extends SurfaceView implements Runnable {
 
                     switch (arrow.direction) {
                         case 0://upwards
-                            canvas.drawBitmap(uparrow, (x + 1) + (gridSize * x), (19 - y + 1) + (gridSize * (19 - y)), null);
+                            canvas.drawBitmap(uscaled, (x + 1) + (gridSize * x), (19 - y + 1) + (gridSize * (19 - y)), null);
                             break;
                         case 1://right
-                            canvas.drawBitmap(rightarrow, (x + 1) + (gridSize * x), (19 - y + 1) + (gridSize * (19 - y)), null);
+                            canvas.drawBitmap(rscaled, (x + 1) + (gridSize * x), (19 - y + 1) + (gridSize * (19 - y)), null);
                             break;
                         case 2://downwards
-                            canvas.drawBitmap(downarrow, (x + 1) + (gridSize * x), (19 - y + 1) + (gridSize * (19 - y)), null);
+                            canvas.drawBitmap(dscaled, (x + 1) + (gridSize * x), (19 - y + 1) + (gridSize * (19 - y)), null);
                             break;
                         case 3://left
-                            canvas.drawBitmap(leftarroaw, (x + 1) + (gridSize * x), (19 - y + 1) + (gridSize * (19 - y)), null);
+                            canvas.drawBitmap(lscaled, (x + 1) + (gridSize * x), (19 - y + 1) + (gridSize * (19 - y)), null);
                             break;
                         default:
                             break;
